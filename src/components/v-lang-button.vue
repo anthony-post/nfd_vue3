@@ -1,8 +1,7 @@
 <template>
   <router-link class="link" v-show="langButton" :to="{ name: '' }">
     <button
-      class="link__langbutton"
-      :class="{ link__langbutton_mobile: checkScreen() }"
+      class="link__langbutton link__langbutton_mobile"
       @click="toggleLangIcon"
     >
       Eng
@@ -10,8 +9,7 @@
   </router-link>
   <router-link class="link" v-show="!langButton" :to="{ name: '' }">
     <button
-      class="link__langbutton"
-      :class="{ link__langbutton_mobile: checkScreen() }"
+      class="link__langbutton link__langbutton_mobile"
       @click="toggleLangIcon"
     >
       Рус
@@ -20,22 +18,15 @@
 </template>
 
 <script>
+import { ref } from "vue";
 export default {
   name: "v-lang-button",
-  props: {
-    checkScreen: {
-      type: Function,
-    },
-  },
-  data() {
-    return {
-      langButton: true,
-    };
-  },
-  methods: {
-    toggleLangIcon() {
-      this.langButton = !this.langButton;
-    },
+  setup() {
+    const langButton = ref(true);
+    function toggleLangIcon() {
+      langButton.value = !langButton.value;
+    }
+    return { langButton, toggleLangIcon };
   },
 };
 </script>
@@ -57,13 +48,13 @@ export default {
   color: $color-text;
   text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   background-color: transparent;
-  cursor: pointer;
-  margin: 0 0 20px 0;
-  width: 48px;
-  height: 48px;
   border: 1px solid $color-title;
   border-radius: 50%;
   box-sizing: border-box;
+  margin: 0 0 20px 0;
+  width: 48px;
+  height: 48px;
+  cursor: pointer;
 
   &:hover {
     color: $color-grey-light;
@@ -74,15 +65,10 @@ export default {
     border: 1px solid $color-grey-light;
     color: $color-text;
   }
-
-  @media #{$media} and (min-width: 320px) and (max-width: 767px) {
-    display: none;
-  }
 }
 
 .link__langbutton_mobile {
   @media #{$media} and (min-width: 320px) and (max-width: 767px) {
-    display: block;
     margin: 0 0 20px 10px;
   }
 }

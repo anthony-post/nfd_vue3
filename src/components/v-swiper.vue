@@ -47,6 +47,7 @@
 </template>
 
 <script>
+import { ref } from "vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Autoplay, Pagination, Navigation } from "swiper";
 import "swiper/scss";
@@ -54,54 +55,57 @@ import "swiper/scss/autoplay";
 import "swiper/scss/navigation";
 import "swiper/scss/pagination";
 
-const BASE_SLIDER_ITEM = {
-  backgroundRepeat: "no-repeat",
-  backgroundSize: "cover",
-  width: "100%",
-  height: "100%",
-};
+// const BASE_SLIDER_ITEM = {
+//   backgroundRepeat: "no-repeat",
+//   backgroundSize: "cover",
+//   width: "100%",
+//   height: "100%",
+// };
 
 export default {
   components: {
     Swiper,
     SwiperSlide,
   },
-  data() {
-    return {
-      sliderList: [
-        {
-          ...BASE_SLIDER_ITEM,
-          backgroundImage: `url(${require("../assets/slide_parking.jpg")})`,
-          title: "Бесплатная парковка",
-          text: "Оставляйте машину на платных городских парковках и разрешенных местах, не нарушая ПДД, а также в аэропортах.",
-          id: 1,
-        },
-        {
-          ...BASE_SLIDER_ITEM,
-          backgroundImage: `url(${require("../assets/slide_insurance.jpg")})`,
-          title: "Страховка",
-          text: "Полная страховка страховка автомобиля",
-          id: 2,
-        },
-        {
-          ...BASE_SLIDER_ITEM,
-          backgroundImage: `url(${require("../assets/slide_petrol.jpg")})`,
-          title: "Бензин",
-          text: "Полный бак на любой заправке города за наш счёт",
-          id: 3,
-        },
-        {
-          ...BASE_SLIDER_ITEM,
-          backgroundImage: `url(${require("../assets/slide_service.jpg")})`,
-          title: "Обслуживание",
-          text: "Автомобиль проходит еженедельное ТО",
-          id: 4,
-        },
-      ],
-    };
-  },
   setup() {
+    const BASE_SLIDER_ITEM = {
+      backgroundRepeat: "no-repeat",
+      backgroundSize: "cover",
+      width: "100%",
+      height: "100%",
+    };
+    const sliderList = ref([
+      {
+        ...BASE_SLIDER_ITEM,
+        backgroundImage: `url(${require("../assets/slide_parking.jpg")})`,
+        title: "Бесплатная парковка",
+        text: "Оставляйте машину на платных городских парковках и разрешенных местах, не нарушая ПДД, а также в аэропортах.",
+        id: 1,
+      },
+      {
+        ...BASE_SLIDER_ITEM,
+        backgroundImage: `url(${require("../assets/slide_insurance.jpg")})`,
+        title: "Страховка",
+        text: "Полная страховка страховка автомобиля",
+        id: 2,
+      },
+      {
+        ...BASE_SLIDER_ITEM,
+        backgroundImage: `url(${require("../assets/slide_petrol.jpg")})`,
+        title: "Бензин",
+        text: "Полный бак на любой заправке города за наш счёт",
+        id: 3,
+      },
+      {
+        ...BASE_SLIDER_ITEM,
+        backgroundImage: `url(${require("../assets/slide_service.jpg")})`,
+        title: "Обслуживание",
+        text: "Автомобиль проходит еженедельное ТО",
+        id: 4,
+      },
+    ]);
     return {
+      sliderList,
       modules: [Autoplay, Pagination, Navigation],
     };
   },

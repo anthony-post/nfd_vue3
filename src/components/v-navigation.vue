@@ -1,55 +1,31 @@
 <template>
   <header class="sidebar">
-    <nav class="navigation">
-      <div class="burger-button">
-        <vicon
-          @click="toggleNav"
-          v-show="burgerButton"
-          icon-id="icon-bars"
-          width="32"
-          height="32"
-        />
-      </div>
-      <div class="burger-button burger-button_black">
-        <vicon
-          @click="toggleNav"
-          v-show="burgerButton_Black"
-          icon-id="icon-bars-black"
-          width="32"
-          height="32"
-        />
+    <div class="navigation-wrp">
+      <div class="burger-button" @click="toggleNav">
+        <span class="burger-button__line"></span>
+        <span class="burger-button__line"></span>
+        <span class="burger-button__line"></span>
       </div>
       <transition name="nav">
         <div v-show="dropdownNav" class="dropdown-nav">
           <div class="x-button">
-            <vicon
-              @click="toggleNav"
-              v-show="burgerButton"
-              icon-id="icon-x"
-              width="32"
-              height="32"
-            />
-            <vicon
-              @click="toggleNav"
-              v-show="burgerButton_Black"
-              icon-id="icon-x"
-              width="32"
-              height="32"
-            />
+            <vicon @click="toggleNav" icon-id="icon-x" width="32" height="32" />
           </div>
           <div class="menu-wrp">
-            <ul class="menu">
-              <li
-                class="menu__item"
-                v-for="menuItem in bmMenuList"
-                :key="menuItem.id"
-              >
-                <router-link class="link" :to="{ name: menuItem.link }">{{
-                  menuItem.title
-                }}</router-link>
-              </li>
-            </ul>
-            <ul class="socialicons">
+            <nav>
+              <ul class="menu">
+                <li
+                  class="menu__item"
+                  v-for="menuItem in bmMenuList"
+                  :key="menuItem.id"
+                >
+                  <router-link class="link" :to="{ name: menuItem.link }">{{
+                    menuItem.title
+                  }}</router-link>
+                </li>
+              </ul>
+            </nav>
+            <ul class="socialicons-list">
               <li
                 class="socialicons__item"
                 v-for="icon in socialMediaList"
@@ -66,19 +42,20 @@
               </li>
             </ul>
           </div>
-          <div v-if="checkScreen()">
-            <VLangButton :checkScreen="checkScreen" />
+          <div class="langbutton-mobile">
+            <VLangButton />
           </div>
         </div>
       </transition>
-    </nav>
-    <div v-if="!checkScreen()">
-      <VLangButton :checkScreen="checkScreen" />
+    </div>
+    <div class="langbutton">
+      <VLangButton />
     </div>
   </header>
 </template>
 
 <script>
+import { ref } from "vue";
 import Vicon from "@/components/v-icon.vue";
 import VLangButton from "@/components/v-lang-button.vue";
 
@@ -88,53 +65,46 @@ export default {
     Vicon,
     VLangButton,
   },
-  data() {
+  setup() {
+    const burgerButton = ref(true);
+    const dropdownNav = ref(null);
+    const langButton = ref(true);
+    const bmMenuList = ref([
+      { id: 1, title: "Парковка", link: "" },
+      { id: 2, title: "Страховка", link: "" },
+      { id: 3, title: "Бензин", link: "" },
+      { id: 4, title: "Обслуживание", link: "" },
+    ]);
+    const socialMediaList = ref([
+      { id: 1, iconId: "icon-telegram", width: "32", height: "32", link: "" },
+      { id: 2, iconId: "icon-facebook", width: "32", height: "32", link: "" },
+      {
+        id: 3,
+        iconId: "icon-instagram",
+        width: "32",
+        height: "32",
+        link: "",
+      },
+    ]);
+
+    function toggleNav() {
+      dropdownNav.value = !dropdownNav.value;
+      burgerButton.value = !burgerButton.value;
+    }
+
+    function toggleLangIcon() {
+      langButton.value = !langButton.value;
+    }
+
     return {
-      burgerButton: true,
-      dropdownNav: null,
-      windowWidth: null,
-      burgerButton_Black: null,
-      langButton: true,
-      bmMenuList: [
-        { id: 1, title: "Парковка", link: "" },
-        { id: 2, title: "Страховка", link: "" },
-        { id: 3, title: "Бензин", link: "" },
-        { id: 4, title: "Обслуживание", link: "" },
-      ],
-      socialMediaList: [
-        { id: 1, iconId: "icon-telegram", width: "32", height: "32", link: "" },
-        { id: 2, iconId: "icon-facebook", width: "32", height: "32", link: "" },
-        {
-          id: 3,
-          iconId: "icon-instagram",
-          width: "32",
-          height: "32",
-          link: "",
-        },
-      ],
+      burgerButton,
+      dropdownNav,
+      langButton,
+      bmMenuList,
+      socialMediaList,
+      toggleNav,
+      toggleLangIcon,
     };
-  },
-  created() {
-    window.addEventListener("resize", this.checkScreen);
-    this.checkScreen();
-  },
-  methods: {
-    toggleNav() {
-      this.dropdownNav = !this.dropdownNav;
-      this.burgerButton = !this.burgerButton;
-    },
-    checkScreen() {
-      this.windowWidth = window.innerWidth;
-      if (this.windowWidth <= 767) {
-        this.burgerButton = false;
-        return (this.burgerButton_Black = true);
-      }
-      this.burgerButton = true;
-      this.burgerButton_Black = false;
-    },
-    toggleLangIcon() {
-      this.langButton = !this.langButton;
-    },
   },
 };
 </script>
@@ -159,7 +129,7 @@ export default {
   }
 }
 
-.navigation {
+.navigation-wrp {
   position: relative;
   display: flex;
   flex-direction: row;
@@ -183,7 +153,7 @@ export default {
 }
 
 .menu,
-.socialicons {
+.socialicons-list {
   list-style: none;
   margin: 0;
   padding: 0 0 38px 128px;
@@ -211,7 +181,7 @@ export default {
   }
 }
 
-.socialicons {
+.socialicons-list {
   display: flex;
   flex-direction: row;
 }
@@ -226,12 +196,24 @@ export default {
 
 .burger-button {
   cursor: pointer;
+
+  @media #{$media} and (min-width: 320px) and (max-width: 767px) {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+  }
 }
 
-.burger-button_black {
-  position: fixed;
-  top: 16px;
-  left: 16px;
+.burger-button__line {
+  display: block;
+  border: 2px solid $color-white;
+  border-radius: 5px;
+  width: 24px;
+  margin: 5px 0;
+
+  @media #{$media} and (min-width: 320px) and (max-width: 767px) {
+    border: 2px solid $color-black;
+  }
 }
 
 .x-button {
@@ -268,6 +250,14 @@ export default {
   }
 }
 
+.langbutton-mobile {
+  display: none;
+
+  @media #{$media} and (min-width: 320px) and (max-width: 767px) {
+    display: block;
+  }
+}
+
 .nav-enter-active,
 .nav-leave-active {
   transition: 1s ease all;
@@ -280,5 +270,13 @@ export default {
 
 .nav-enter-to {
   transform: translateX(0);
+}
+
+.langbutton {
+  display: block;
+
+  @media #{$media} and (min-width: 320px) and (max-width: 767px) {
+    display: none;
+  }
 }
 </style>

@@ -12,9 +12,9 @@
       </div>
       <footer class="footer">
         <p class="footer__copyright">&#169; 2016-2019 «Need for drive»</p>
-        <p class="footer__phone">
-          <a class="footer__link" href="#">8 (495) 234-22-44</a>
-        </p>
+        <address class="footer__phone">
+          <a class="footer__link" href="tel:+74952342244">8 (495) 234-22-44</a>
+        </address>
       </footer>
     </div>
     <div class="right-wrp">

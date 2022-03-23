@@ -5,6 +5,7 @@
 </template>
 
 <script>
+import { computed } from "vue";
 import spriteUrl from "@/assets/sprite.svg";
 
 export default {
@@ -23,10 +24,11 @@ export default {
       default: 32,
     },
   },
-  computed: {
-    iconPath() {
-      return `${spriteUrl}#${this.iconId}`;
-    },
+  setup(props) {
+    const iconPath = computed(() => {
+      return `${spriteUrl}#${props.iconId}`;
+    });
+    return { iconPath };
   },
 };
 </script>
@@ -37,8 +39,5 @@ export default {
 
 .icon {
   fill: $color-white;
-  display: inline-block;
-  vertical-align: baseline;
-  // margin: 0 20px 0 0;
 }
 </style>
