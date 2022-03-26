@@ -66,16 +66,13 @@ export default {
     VLangButton,
   },
   setup() {
-    const burgerButton = ref(true);
-    const dropdownNav = ref(null);
-    const langButton = ref(true);
-    const bmMenuList = ref([
+    const bmMenuList = [
       { id: 1, title: "Парковка", link: "" },
       { id: 2, title: "Страховка", link: "" },
       { id: 3, title: "Бензин", link: "" },
       { id: 4, title: "Обслуживание", link: "" },
-    ]);
-    const socialMediaList = ref([
+    ];
+    const socialMediaList = [
       { id: 1, iconId: "icon-telegram", width: "32", height: "32", link: "" },
       { id: 2, iconId: "icon-facebook", width: "32", height: "32", link: "" },
       {
@@ -85,25 +82,22 @@ export default {
         height: "32",
         link: "",
       },
-    ]);
+    ];
+
+    const burgerButton = ref(true);
+    const dropdownNav = ref(null);
 
     function toggleNav() {
       dropdownNav.value = !dropdownNav.value;
       burgerButton.value = !burgerButton.value;
     }
 
-    function toggleLangIcon() {
-      langButton.value = !langButton.value;
-    }
-
     return {
       burgerButton,
       dropdownNav,
-      langButton,
       bmMenuList,
       socialMediaList,
       toggleNav,
-      toggleLangIcon,
     };
   },
 };
@@ -123,7 +117,7 @@ export default {
   min-width: 64px;
   height: 100vh;
 
-  @media #{$media} and (min-width: 320px) and (max-width: 767px) {
+  @media #{$media} and (min-width: $mobile-min) and (max-width: $mobile-max) {
     height: 0;
     transition: none;
   }
@@ -136,7 +130,7 @@ export default {
   margin: 32px 0 0 0;
   transition: 0.5s ease all;
 
-  @media #{$media} and (min-width: 320px) and (max-width: 767px) {
+  @media #{$media} and (min-width: $mobile-min) and (max-width: $mobile-max) {
     margin: 0;
   }
 }
@@ -158,7 +152,7 @@ export default {
   margin: 0;
   padding: 0 0 38px 128px;
 
-  @media #{$media} and (min-width: 320px) and (max-width: 767px) {
+  @media #{$media} and (min-width: $mobile-min) and (max-width: $mobile-max) {
     padding: 0 0 38px 28px;
   }
 }
@@ -197,7 +191,7 @@ export default {
 .burger-button {
   cursor: pointer;
 
-  @media #{$media} and (min-width: 320px) and (max-width: 767px) {
+  @media #{$media} and (min-width: $mobile-min) and (max-width: $mobile-max) {
     position: fixed;
     top: 16px;
     left: 16px;
@@ -211,7 +205,7 @@ export default {
   width: 24px;
   margin: 5px 0;
 
-  @media #{$media} and (min-width: 320px) and (max-width: 767px) {
+  @media #{$media} and (min-width: $mobile-min) and (max-width: $mobile-max) {
     border: 2px solid $color-black;
   }
 }
@@ -235,29 +229,38 @@ export default {
     rgba(21, 27, 31, 0.81) 50vw
   );
 
-  @media #{$media} and (min-width: 1024px) and (max-width: 1439px) {
+  @media #{$media} and (min-width: $desktop-min) and (max-width: $desktop-max) {
     background: linear-gradient(
       to right,
       #111518 62.3vw,
       rgba(21, 27, 31, 0.81) 40vw
     );
   }
-  @media #{$media} and (min-width: 768px) and (max-width: 1023px) {
+  @media #{$media} and (min-width: $tablet-min) and (max-width: $tablet-max) {
     background: #111518;
   }
-  @media #{$media} and (min-width: 320px) and (max-width: 767px) {
+  @media #{$media} and (min-width: $mobile-min) and (max-width: $mobile-max) {
     background: #111518;
+  }
+}
+
+.langbutton {
+  display: block;
+
+  @media #{$media} and (min-width: $mobile-min) and (max-width: $mobile-max) {
+    display: none;
   }
 }
 
 .langbutton-mobile {
   display: none;
 
-  @media #{$media} and (min-width: 320px) and (max-width: 767px) {
+  @media #{$media} and (min-width: $mobile-min) and (max-width: $mobile-max) {
     display: block;
   }
 }
 
+//для анимации меню
 .nav-enter-active,
 .nav-leave-active {
   transition: 1s ease all;
@@ -270,13 +273,5 @@ export default {
 
 .nav-enter-to {
   transform: translateX(0);
-}
-
-.langbutton {
-  display: block;
-
-  @media #{$media} and (min-width: 320px) and (max-width: 767px) {
-    display: none;
-  }
 }
 </style>

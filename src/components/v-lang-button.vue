@@ -68,7 +68,7 @@ export default {
 }
 
 .link__langbutton_mobile {
-  @media #{$media} and (min-width: 320px) and (max-width: 767px) {
+  @media #{$media} and (min-width: $mobile-min) and (max-width: $mobile-max) {
     margin: 0 0 20px 10px;
   }
 }

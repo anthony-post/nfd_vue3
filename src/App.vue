@@ -25,17 +25,17 @@ export default {
   max-width: 100vw;
   min-width: 1440px;
 
-  @media #{$media} and (min-width: 1024px) and (max-width: 1439px) {
+  @media #{$media} and (min-width: $desktop-min) and (max-width: $desktop-max) {
     min-width: 1024px;
     max-width: 1439px;
   }
 
-  @media #{$media} and (min-width: 768px) and (max-width: 1023px) {
+  @media #{$media} and (min-width: $tablet-min) and (max-width: $tablet-max) {
     min-width: 768px;
     max-width: 1023px;
   }
 
-  @media #{$media} and (min-width: 320px) and (max-width: 767px) {
+  @media #{$media} and (min-width: $mobile-min) and (max-width: $mobile-max) {
     display: flex;
     flex-direction: column;
     justify-content: space-between;

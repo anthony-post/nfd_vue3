@@ -18,20 +18,20 @@
       </footer>
     </div>
     <div class="right-wrp">
-      <Vswiper />
+      <Vslider />
     </div>
   </div>
 </template>
 
 <script>
 import Vheader from "@/components/v-header.vue";
-import Vswiper from "@/components/v-swiper.vue";
+import Vslider from "@/components/v-slider.vue";
 
 export default {
   name: "v-main",
   components: {
     Vheader,
-    Vswiper,
+    Vslider,
   },
 };
 </script>
@@ -119,7 +119,7 @@ export default {
 }
 
 .about__title_green {
-  color: $color-text;
+  color: $color-green;
 }
 
 .about__text {
