@@ -1,30 +1,48 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+  <div class="wrapper">
+    <Vnavigation />
+    <router-view />
   </div>
-  <router-view />
 </template>
 
+<script>
+import Vnavigation from "@/components/v-navigation.vue";
+
+export default {
+  components: {
+    Vnavigation,
+  },
+};
+</script>
+
 <style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+@import "@/assets/styles.scss";
+@import "@/assets/variables.scss";
 
-#nav {
-  padding: 30px;
+.wrapper {
+  display: flex;
+  flex-direction: row;
+  max-width: 100vw;
+  min-width: 1440px;
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
+  @media #{$media} and (min-width: $desktop-min) and (max-width: $desktop-max) {
+    min-width: 1024px;
+    max-width: 1439px;
+  }
 
-    &.router-link-exact-active {
-      color: #42b983;
-    }
+  @media #{$media} and (min-width: $tablet-min) and (max-width: $tablet-max) {
+    min-width: 768px;
+    max-width: 1023px;
+  }
+
+  @media #{$media} and (min-width: $mobile-min) and (max-width: $mobile-max) {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-width: 320px;
+    max-width: 767px;
+    height: calc(100vh - 80px);
+    height: -webkit-fill-available;
   }
 }
 </style>
