@@ -74,14 +74,6 @@ export default {
     ];
     const socialMediaList = [
       { id: 1, iconId: "icon-telegram", width: "32", height: "32", link: "" },
-      { id: 2, iconId: "icon-facebook", width: "32", height: "32", link: "" },
-      {
-        id: 3,
-        iconId: "icon-instagram",
-        width: "32",
-        height: "32",
-        link: "",
-      },
     ];
 
     const burgerButton = ref(true);
