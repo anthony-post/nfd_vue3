@@ -110,18 +110,14 @@ export default {
     const slideDirection = ref("");
 
     function changeSlidePrev() {
-      if (visibleSlide.value <= 0) {
-        visibleSlide.value = sliderList.length - 1;
-      } else {
+      if (visibleSlide.value > 0) {
         visibleSlide.value--;
       }
       slideDirection.value = "right";
     }
 
     function changeSlideNext() {
-      if (visibleSlide.value >= sliderList.length - 1) {
-        visibleSlide.value = 0;
-      } else {
+      if (visibleSlide.value < sliderList.length - 1) {
         visibleSlide.value++;
       }
       slideDirection.value = "left";
