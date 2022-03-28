@@ -6,7 +6,7 @@
         <h1 class="about__title">Каршеринг</h1>
         <p class="about__title about__title_green">Need for drive</p>
         <p class="about__text">Поминутная аренда авто твоего города</p>
-        <router-link :to="{ name: '' }">
+        <router-link :to="{ name: 'v-order' }">
           <button class="about__button">Забронировать</button>
         </router-link>
       </div>
