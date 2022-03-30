@@ -7,28 +7,19 @@
       type="text"
       :name="name"
       :placeholder="placeholder"
-      v-if="isItemSelected"
       v-model.trim="inputValue"
-    />
-    <!-- Dropdown Selected Input -->
-    <input
-      v-else
-      class="dropdown-input input-block__input"
-      type="text"
-      :name="name"
-      :value="selectedItem.name"
+      @focus="isDropDownVisible = true"
     /><span
-      class="input-block__cross-icon"
-      v-if="!isItemSelected"
-      @click="resetSelection"
-      ><vicon icon-id="icon-cross" width="8" height="8"
-    /></span>
+        class="input-block__cross-icon"
+        v-if="inputValue"
+        @click="resetSelection"
+      ><vicon icon-id="icon-cross" width="8" height="8"/>
+      </span>
     <!-- Dropdown List -->
-    <ul class="dropdown-list" v-show="inputValue">
+    <ul class="dropdown-list" v-show="isDropDownVisible">
       <li
         class="dropdown-item"
-        v-show="itemVisible(item)"
-        v-for="item in itemList"
+        v-for="item in filteredList"
         :key="item.id"
         @click="selectItem(item)"
       >
@@ -39,7 +30,7 @@
 </template>
 
 <script>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import Vicon from "@/components/v-icon.vue";
 
 export default {
@@ -70,33 +61,53 @@ export default {
     },
   },
   setup(props, context) {
-    const inputValue = ref("");
-
-    const isItemSelected = computed(() => {
-      return Object.keys(props.selectedItem).length === 0;
+    //подставляет в инпут выбранное значение из store, если оно было выбрано и происходило переключение по вкладкам
+    onMounted(() => { 
+      if(Object.keys(props.selectedItem).length !== 0) {
+        inputValue.value = props.selectedItem.name;
+      } else {
+        inputValue.value = "";
+      }
     });
 
-    function resetSelection() {
-      context.emit("on-item-reset");
-    }
+    const inputValue = ref("");
+    const isDropDownVisible = ref(null);
+
+    const filteredList = computed(() => {
+      let currentInput = inputValue.value.toLowerCase();
+      if(currentInput) {
+        return props.itemList.filter((item) => {
+          if(item?.name) {
+            let currentName = item.name.toLowerCase();
+            return currentName.startsWith(currentInput);
+          }
+        });
+      } else { 
+          return props.itemList;
+        }
+    });
 
     function selectItem(chosenItem) {
-      inputValue.value = ""; //обнуляем для того, чтобы список городов полученный по API не отображался по-умолчанию
+      if(chosenItem) {
+        inputValue.value = chosenItem.name
+      } else {
+        inputValue.value = "";
+      }
+      isDropDownVisible.value = false;
       context.emit("on-item-selected", chosenItem);
     }
 
-    function itemVisible(item) {
-      let currentName = item.name.toLowerCase();
-      let currentInput = inputValue.value.toLowerCase();
-      return currentName.startsWith(currentInput); //поиск с начала ввода
+    function resetSelection() {
+      inputValue.value = "";
+      context.emit("on-item-reset");
     }
 
     return {
       inputValue,
-      isItemSelected,
-      resetSelection,
+      isDropDownVisible,
+      filteredList,
       selectItem,
-      itemVisible,
+      resetSelection,
     };
   },
 };
