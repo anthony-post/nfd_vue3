@@ -1,19 +1,19 @@
 <template>
   <div class="order-wrp">
     <Vheader class="order-center" />
-    <Vtabs />
+    <OrderWindow />
   </div>
 </template>
 
 <script>
 import Vheader from "@/components/v-header.vue";
-import Vtabs from "@/components/v-tabs.vue";
+import OrderWindow from "@/components/order-window.vue";
 
 export default {
   name: "v-order",
   components: {
     Vheader,
-    Vtabs,
+    OrderWindow,
   },
 };
 </script>

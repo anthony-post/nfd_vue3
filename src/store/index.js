@@ -1,5 +1,5 @@
 import { createStore } from "vuex";
-import axios from "axios";
+import apiServices from "../services/apiServices";
 
 export default createStore({
   state: {
@@ -47,12 +47,8 @@ export default createStore({
   actions: {
     //API
     GET_CITYLIST_FROM_API({ commit }) {
-      axios("https://api-factory.simbirsoft1.com/api/db/city", {
-        method: "GET",
-        headers: {
-          "X-Api-Factory-Application-Id": "5e25c641099b810b946c5d5b",
-        },
-      })
+      apiServices
+        .getCities()
         .then((cityList) => {
           commit("SET_CITYLIST_TO_STATE", cityList);
           return cityList;
@@ -63,12 +59,8 @@ export default createStore({
         });
     },
     GET_POINTLIST_FROM_API({ commit }) {
-      axios("https://api-factory.simbirsoft1.com/api/db/point", {
-        method: "GET",
-        headers: {
-          "X-Api-Factory-Application-Id": "5e25c641099b810b946c5d5b",
-        },
-      })
+      apiServices
+        .getPoints()
         .then((pointList) => {
           commit("SET_POINTLIST_TO_STATE", pointList);
           return pointList;
@@ -79,14 +71,14 @@ export default createStore({
         });
     },
     //SELECTED
-    getSelectedCity({ commit }, chosenItem) {
+    GET_SELECTEDCITY({ commit }, chosenItem) {
       if (chosenItem) {
         commit("SET_SELECTEDCITY", chosenItem);
       } else {
         commit("RESET_SELECTEDCITY");
       }
     },
-    getSelectedPoint({ commit }, chosenItem) {
+    GET_SELECTEDPOINT({ commit }, chosenItem) {
       if (chosenItem) {
         commit("SET_SELECTEDPOINT", chosenItem);
       } else {
@@ -95,12 +87,6 @@ export default createStore({
     },
   },
   getters: {
-    CITYLIST(state) {
-      return state.cityList;
-    },
-    POINTLIST(state) {
-      return state.pointList;
-    },
     FILTERED_POINTLIST(state) {
       if (state.selectedCity?.id) {
         return state.pointList.filter((point) => {

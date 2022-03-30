@@ -5,7 +5,7 @@
         label="Город"
         name="city"
         placeholder="Начните вводить город ..."
-        :itemList="CITYLIST"
+        :itemList="cityList"
         :selectedItem="selectedCity"
         @on-item-selected="setSelectedCity"
         @on-item-reset="resetSelectedCity"
@@ -41,9 +41,8 @@ export default {
   setup(props, context) {
     const store = useStore();
     //computed
-    const CITYLIST = computed(() => store.getters.CITYLIST);
     const FILTERED_POINTLIST = computed(() => store.getters.FILTERED_POINTLIST);
-
+    const cityList = computed(() => store.state.cityList);
     const selectedCity = computed(() => store.state.selectedCity);
     const selectedPoint = computed(() => store.state.selectedPoint);
     //methods
@@ -56,21 +55,21 @@ export default {
     }
 
     function setSelectedCity(chosenItem) {
-      store.dispatch("getSelectedCity", chosenItem);
+      store.dispatch("GET_SELECTEDCITY", chosenItem);
     }
 
     function resetSelectedCity() {
-      store.dispatch("getSelectedCity");
-      store.dispatch("getSelectedPoint");
+      store.dispatch("GET_SELECTEDCITY");
+      store.dispatch("GET_SELECTEDPOINT");
       context.emit("on-tab-reset", props.idTab); //отправляем событие в компонет v-tab, где будет вызван метод сброса вкладок
     }
 
     function setSelectedPoint(chosenItem) {
-      store.dispatch("getSelectedPoint", chosenItem);
+      store.dispatch("GET_SELECTEDPOINT", chosenItem);
     }
 
     function resetSelectedPoint() {
-      store.dispatch("getSelectedPoint");
+      store.dispatch("GET_SELECTEDPOINT");
       context.emit("on-tab-reset", props.idTab);
     }
 
@@ -79,7 +78,9 @@ export default {
     GET_POINTLIST_FROM_API();
 
     return {
-      CITYLIST,
+      cityList,
+      selectedCity,
+      selectedPoint,
       FILTERED_POINTLIST,
       setSelectedCity,
       resetSelectedCity,
@@ -87,8 +88,6 @@ export default {
       resetSelectedPoint,
       GET_CITYLIST_FROM_API,
       GET_POINTLIST_FROM_API,
-      selectedCity,
-      selectedPoint,
     };
   },
 };
