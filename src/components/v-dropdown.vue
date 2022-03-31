@@ -4,17 +4,17 @@
     <!-- Dropdown Input -->
     <input
       class="dropdown-input input-block__input"
-      type="text"
+      v-model.trim="inputValue"
       :name="name"
       :placeholder="placeholder"
-      v-model.trim="inputValue"
+      type="text"
       @focus="isDropDownVisible = true"
     /><span
-        class="input-block__cross-icon"
-        v-if="inputValue"
-        @click="resetSelection"
-      ><vicon icon-id="icon-cross" width="8" height="8"/>
-      </span>
+      class="input-block__cross-icon"
+      v-if="inputValue"
+      @click="resetSelection"
+      ><vicon icon-id="icon-cross" width="8" height="8" />
+    </span>
     <!-- Dropdown List -->
     <ul class="dropdown-list" v-show="isDropDownVisible">
       <li
@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch, toRef } from "vue";
 import Vicon from "@/components/v-icon.vue";
 
 export default {
@@ -62,34 +62,46 @@ export default {
   },
   setup(props, context) {
     //подставляет в инпут выбранное значение из store, если оно было выбрано и происходило переключение по вкладкам
-    onMounted(() => { 
-      if(Object.keys(props.selectedItem).length !== 0) {
+    onMounted(() => {
+      if (Object.keys(props.selectedItem).length !== 0) {
         inputValue.value = props.selectedItem.name;
       } else {
         inputValue.value = "";
       }
     });
+    //отслеживает пустой объект в store.
+    //если объект пустой, то значение инпута сбрасывается.
+    //необходимо для того, чтобы в случае сброса города, пункт выдачи тоже сбрасывался
+    watch(
+      toRef(props, "selectedItem"),
+      () => {
+        if (Object.keys(props.selectedItem).length === 0) {
+          inputValue.value = "";
+        }
+      },
+      { deep: true }
+    );
 
     const inputValue = ref("");
     const isDropDownVisible = ref(null);
 
     const filteredList = computed(() => {
       let currentInput = inputValue.value.toLowerCase();
-      if(currentInput) {
+      if (currentInput) {
         return props.itemList.filter((item) => {
-          if(item?.name) {
+          if (item?.name) {
             let currentName = item.name.toLowerCase();
             return currentName.startsWith(currentInput);
           }
         });
-      } else { 
-          return props.itemList;
-        }
+      } else {
+        return props.itemList;
+      }
     });
 
     function selectItem(chosenItem) {
-      if(chosenItem) {
-        inputValue.value = chosenItem.name
+      if (chosenItem) {
+        inputValue.value = chosenItem.name;
       } else {
         inputValue.value = "";
       }

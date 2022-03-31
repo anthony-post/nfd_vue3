@@ -7,9 +7,9 @@
         <span class="burger-button__line"></span>
       </div>
       <transition name="nav">
-        <div v-show="dropdownNav" class="dropdown-nav">
+        <div class="dropdown-nav" v-show="dropdownNav">
           <div class="x-button">
-            <vicon @click="toggleNav" icon-id="icon-x" width="32" height="32" />
+            <vicon icon-id="icon-x" width="32" height="32" @click="toggleNav" />
           </div>
           <div class="menu-wrp">
             <nav>
@@ -19,9 +19,9 @@
                   v-for="menuItem in bmMenuList"
                   :key="menuItem.id"
                 >
-                  <router-link class="link" :to="{ name: menuItem.link }">{{
-                    menuItem.title
-                  }}</router-link>
+                  <router-link class="link" :to="{ name: menuItem.link }">
+                    {{ menuItem.title }}
+                  </router-link>
                 </li>
               </ul>
             </nav>
