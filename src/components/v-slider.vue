@@ -1,10 +1,7 @@
 <template>
   <div class="slider-wrp">
     <ul class="slider-list">
-      <li v-for="(slide, index) in sliderList"
-          :key="slide.id"
-          :index="index"
-      >
+      <li v-for="(slide, index) in sliderList" :key="slide.id" :index="index">
         <transition :name="slideDirection">
           <div
             class="slider__item"

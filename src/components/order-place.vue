@@ -21,30 +21,117 @@
       />
     </div>
     <p class="place__text">Выбрать на карте</p>
-    <div class="place__pic">
+    <!-- <div class="place__pic">
       <img src="../assets/map.jpg" alt="карта" />
+    </div> -->
+    <div class="map-wrp">
+      <MapComponent :key="componentKey" :chosenCityObj="chosenCityObj" />
     </div>
   </div>
 </template>
 
 <script>
-import { computed } from "vue";
+import { ref, computed } from "vue";
 import { useStore } from "vuex";
 import VDropdown from "@/components/v-dropdown.vue";
+import MapComponent from "@/components/map-component.vue";
 
 export default {
   name: "order-place",
   components: {
     VDropdown,
+    MapComponent,
   },
   props: ["idTab"],
   setup(props, context) {
+    //const
     const store = useStore();
+    //TO DO массив городов с координатами
+    const cityListCoords = [
+      {
+        id: "6011452fad015e0bb6997e1d",
+        name: "Уфа",
+        coords: [54.735152, 55.958736],
+      },
+      {
+        id: "60d6e4d32aed9a0b9b84fa82",
+        name: "Краснодар",
+        coords: [45.03547, 38.975313],
+      },
+    ];
+    //TO DO массив пунктов с координатами
+    const pointListCoords = [
+      {
+        id: "60bb074b2aed9a0b9b82fc71",
+        name: "Арт-Квадрат",
+        coords: [54.73995, 55.95737],
+      },
+      {
+        id: "111111111111111111111111",
+        name: "Какая-то улица",
+        coords: [54.73945, 55.954502],
+      },
+    ];
+
+    //ref
+    const componentKey = ref(0);
+
     //computed
     const FILTERED_POINTLIST = computed(() => store.getters.FILTERED_POINTLIST);
     const cityList = computed(() => store.state.cityList);
     const selectedCity = computed(() => store.state.selectedCity);
     const selectedPoint = computed(() => store.state.selectedPoint);
+
+    //TO DO выбранный объект города c координатми города и его пунктов выдачи
+    const chosenCityObj = computed(() => {
+      var newObjCity = {};
+      for (var i = 0; i < cityListCoords.length; i++) {
+        if (selectedCity.value.id === cityListCoords[i].id) {
+          //в выбранный объект города добавляются его координаты
+          //добавление  нового свойства (массив с пунктами выдачи и их координатами) в объект
+          // newObjCity = { ...selectedCity.value, coords: cityListCoords[i].coords, coordsPoints: newPointListWithCoordsArr.value };
+          newObjCity = {
+            ...selectedCity.value,
+            coords: cityListCoords[i].coords,
+            points: [
+              {
+                id: "60bb074b2aed9a0b9b82fc71",
+                name: "Арт-Квадрат",
+                coords: [54.73995, 55.95737],
+              },
+              {
+                id: "111111111111111111111111",
+                name: "Какая-то улица",
+                coords: [54.73945, 55.954502],
+              },
+            ],
+          };
+        }
+      }
+      //ререндеринг карты если выбран город
+      if (Object.keys(newObjCity).length !== 0) {
+        forceRerenderMap();
+      }
+
+      return newObjCity;
+    });
+
+    //TO DO добавить координаты пунктов выдачи в полученный массив с объектами пунктов выдачи
+    const newPointListWithCoordsArr = computed(() => {
+      const arr = [...FILTERED_POINTLIST.value]; //копия отфильтрованного массива по выбранному городу
+      arr.forEach((item) => {
+        var newArrObj = {};
+        for (var i = 0; i < pointListCoords.length; i++) {
+          if (item.id === pointListCoords[i].id) {
+            newArrObj = { ...item, coordsPoint: pointListCoords[i].coords };
+            // item = { ...item, coordsPoint: pointListCoords[i].coords };
+          }
+        }
+        return newArrObj;
+      });
+      return arr;
+    });
+
     //methods
     function GET_CITYLIST_FROM_API() {
       store.dispatch("GET_CITYLIST_FROM_API");
@@ -73,21 +160,31 @@ export default {
       context.emit("on-tab-reset", props.idTab);
     }
 
+    function forceRerenderMap() {
+      componentKey.value += 1;
+    }
+
     //API
     GET_CITYLIST_FROM_API();
     GET_POINTLIST_FROM_API();
 
     return {
+      cityListCoords,
+      pointListCoords,
+      componentKey,
       cityList,
       selectedCity,
       selectedPoint,
       FILTERED_POINTLIST,
+      chosenCityObj,
+      newPointListWithCoordsArr,
       setSelectedCity,
       resetSelectedCity,
       setSelectedPoint,
       resetSelectedPoint,
       GET_CITYLIST_FROM_API,
       GET_POINTLIST_FROM_API,
+      forceRerenderMap,
     };
   },
 };
@@ -115,6 +212,16 @@ export default {
 
 .place__pic img {
   max-width: 100%;
+}
+
+.map-wrp {
+  width: 80%;
+  height: calc(70vh - 165px);
+
+  @media #{$media} and (min-width: $mobile-min) and (max-width: $mobile-max) {
+    width: 100%;
+    height: calc(50vh - 185px);
+  }
 }
 
 @media #{$media} and (min-width: $mobile-min) and (max-width: $mobile-max) {
