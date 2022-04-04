@@ -67,9 +67,9 @@ export default {
         coords: [54.73995, 55.95737],
       },
       {
-        id: "111111111111111111111111",
-        name: "Какая-то улица",
-        coords: [54.73945, 55.954502],
+        id: "6114630f2aed9a0b9b850806",
+        name: "Автомобильная парковка",
+        coords: [45.046319, 39.030356],
       },
     ];
 
@@ -84,27 +84,15 @@ export default {
 
     //TO DO выбранный объект города c координатми города и его пунктов выдачи
     const chosenCityObj = computed(() => {
-      var newObjCity = {};
+      let newObjCity = {};
       for (var i = 0; i < cityListCoords.length; i++) {
         if (selectedCity.value.id === cityListCoords[i].id) {
           //в выбранный объект города добавляются его координаты
           //добавление  нового свойства (массив с пунктами выдачи и их координатами) в объект
-          // newObjCity = { ...selectedCity.value, coords: cityListCoords[i].coords, coordsPoints: newPointListWithCoordsArr.value };
           newObjCity = {
             ...selectedCity.value,
             coords: cityListCoords[i].coords,
-            points: [
-              {
-                id: "60bb074b2aed9a0b9b82fc71",
-                name: "Арт-Квадрат",
-                coords: [54.73995, 55.95737],
-              },
-              {
-                id: "111111111111111111111111",
-                name: "Какая-то улица",
-                coords: [54.73945, 55.954502],
-              },
-            ],
+            points: newPointListWithCoordsArr.value,
           };
         }
       }
@@ -118,18 +106,13 @@ export default {
 
     //TO DO добавить координаты пунктов выдачи в полученный массив с объектами пунктов выдачи
     const newPointListWithCoordsArr = computed(() => {
-      const arr = [...FILTERED_POINTLIST.value]; //копия отфильтрованного массива по выбранному городу
-      arr.forEach((item) => {
-        var newArrObj = {};
-        for (var i = 0; i < pointListCoords.length; i++) {
-          if (item.id === pointListCoords[i].id) {
-            newArrObj = { ...item, coordsPoint: pointListCoords[i].coords };
-            // item = { ...item, coordsPoint: pointListCoords[i].coords };
-          }
-        }
-        return newArrObj;
+      return FILTERED_POINTLIST.value.map((item) => {
+        const foundPoint = pointListCoords.find(
+          (point) => point.id === item.id
+        );
+
+        return foundPoint ? { ...item, coordsPoint: foundPoint.coords } : item;
       });
-      return arr;
     });
 
     //methods

@@ -1,8 +1,10 @@
 <template>
-  <div id="map" style="width: 100%; height: 100%"></div>
+  <div ref="mapRef" style="width: 100%; height: 100%"></div>
 </template>
 
 <script>
+import { ref, onMounted } from "vue";
+
 export default {
   name: "map-component",
   props: {
@@ -14,14 +16,19 @@ export default {
     //START инициализация Яндекс Карты
     const ymaps = window.ymaps;
 
-    function initYandexMap() {
-      var coords = [];
+    const mapRef = ref(null);
+
+    function initYandexMap(mapRef) {
+      let coords = [];
+      //если город выбран, берутся координаты города и подставляются в центр карты
       if (props.chosenCityObj?.coords) {
         coords = props.chosenCityObj.coords;
-      } else {
+      }
+      //иначе подставляются по-умолчанию координаты Москвы
+      else {
         coords = [55.75322, 37.622513];
       }
-      var myMap = new ymaps.Map("map", {
+      const myMap = new ymaps.Map(mapRef, {
         center: coords, //координаты центра карты
         zoom: 12, //зум карты
         controls: [], //убираем стандартные элементы управления на карте
@@ -29,8 +36,8 @@ export default {
       // добавление маркеров с изображением из макета
       if (props.chosenCityObj?.points) {
         for (let i = 0; i < props.chosenCityObj.points.length; i++) {
-          var myPlacemark = new ymaps.Placemark(
-            props.chosenCityObj.points[i].coords,
+          const myPlacemark = new ymaps.Placemark(
+            props.chosenCityObj.points[i].coordsPoint,
             {
               hintContent: props.chosenCityObj.points[i].name, //сообщение при наведении на маркер
               balloonContent: props.chosenCityObj.points[i].name, //сообщение при нажатии на маркер
@@ -50,11 +57,14 @@ export default {
       }
     }
 
-    ymaps.ready(initYandexMap);
+    onMounted(() => {
+      ymaps.ready(() => initYandexMap(mapRef.value));
+    });
     //END инициализация Яндекс Карты
 
     return {
       ymaps,
+      mapRef,
     };
   },
 };
