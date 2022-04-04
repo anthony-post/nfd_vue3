@@ -31,8 +31,8 @@
 </template>
 
 <script>
-import { ref, computed } from "vue";
 import { useStore } from "vuex";
+import { ref, computed, watch } from "vue";
 import VDropdown from "@/components/v-dropdown.vue";
 import MapComponent from "@/components/map-component.vue";
 
@@ -46,7 +46,7 @@ export default {
   setup(props, context) {
     //const
     const store = useStore();
-    //TO DO массив городов с координатами
+    //массив городов с координатами
     const cityListCoords = [
       {
         id: "6011452fad015e0bb6997e1d",
@@ -58,8 +58,53 @@ export default {
         name: "Краснодар",
         coords: [45.03547, 38.975313],
       },
+      {
+        id: "6005b8f9ad015e0bb6997778",
+        name: "Санкт-Петербург",
+        coords: [59.939099, 30.315877],
+      },
+      {
+        id: "61a3675e05c99b2812794ed7",
+        name: "Ростов-на-Дону",
+        coords: [47.222078, 39.720358],
+      },
+      {
+        id: "61ab1310bb7a006c05c5497f",
+        name: "Екатеринбург",
+        coords: [56.838011, 60.597474],
+      },
+      {
+        id: "61b30fe9bb7a006c05c54e2b",
+        name: "Ульяновск",
+        coords: [54.314192, 48.403132],
+      },
+      {
+        id: "6238c42573b61100181018e1",
+        name: "Омск",
+        coords: [54.989347, 73.368221],
+      },
+      {
+        id: "615a1d1218f5c2264119b91a",
+        name: "Саранск",
+        coords: [54.187433, 45.183938],
+      },
+      {
+        id: "61585c3818f5c2264119b859",
+        name: "Сочи",
+        coords: [43.585472, 39.723098],
+      },
+      {
+        id: "6114e2a22aed9a0b9b85083e",
+        name: "Воронеж",
+        coords: [51.660786, 39.200269],
+      },
+      {
+        id: "5ea07c3b099b810b946c627b",
+        name: "Саратов",
+        coords: [51.533562, 46.034266],
+      },
     ];
-    //TO DO массив пунктов с координатами
+    //массив пунктов с координатами
     const pointListCoords = [
       {
         id: "60bb074b2aed9a0b9b82fc71",
@@ -70,6 +115,26 @@ export default {
         id: "6114630f2aed9a0b9b850806",
         name: "Автомобильная парковка",
         coords: [45.046319, 39.030356],
+      },
+      {
+        id: "615ae47018f5c2264119b939",
+        name: "Пункт",
+        coords: [59.935119, 30.349339],
+      },
+      {
+        id: "61a391e605c99b2812794f1c",
+        name: "Администрация",
+        coords: [47.221705, 39.712156],
+      },
+      {
+        id: "61adef6bbb7a006c05c54a8a",
+        name: "Магнит",
+        coords: [56.901277, 60.585967],
+      },
+      {
+        id: "61b310cfbb7a006c05c54e2c",
+        name: "Мариинская гимназия",
+        coords: [54.312280, 48.395406],
       },
     ];
 
@@ -84,6 +149,14 @@ export default {
 
     //TO DO выбранный объект города c координатми города и его пунктов выдачи
     const chosenCityObj = computed(() => {
+        //Этот вариант почему-то не отрабатывает и выдает ошибку в консоле
+        // let newObjCity = {};
+        // const foundCity = cityListCoords.find(
+        //   (city) => city.id === selectedCity.value.id
+        // );
+        // newObjCity = { ...selectedCity.value, coords: foundCity.coords, points: newPointListWithCoordsArr.value };
+        // return newObjCity;
+
       let newObjCity = {};
       for (var i = 0; i < cityListCoords.length; i++) {
         if (selectedCity.value.id === cityListCoords[i].id) {
@@ -96,11 +169,6 @@ export default {
           };
         }
       }
-      //ререндеринг карты если выбран город
-      if (Object.keys(newObjCity).length !== 0) {
-        forceRerenderMap();
-      }
-
       return newObjCity;
     });
 
@@ -150,6 +218,11 @@ export default {
     //API
     GET_CITYLIST_FROM_API();
     GET_POINTLIST_FROM_API();
+
+    //ререндеринг компонента карты если выбран/сброшен город или пункт выдачи
+    watch([selectedCity, selectedPoint], () => {
+      forceRerenderMap();
+    });
 
     return {
       cityListCoords,

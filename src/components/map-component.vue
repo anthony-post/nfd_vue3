@@ -3,7 +3,8 @@
 </template>
 
 <script>
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
+import { useStore } from "vuex";
 
 export default {
   name: "map-component",
@@ -13,24 +14,40 @@ export default {
     },
   },
   setup(props) {
+    const store = useStore();
     //START инициализация Яндекс Карты
     const ymaps = window.ymaps;
 
     const mapRef = ref(null);
 
+    const selectedCity = computed(() => store.state.selectedCity);
+    const selectedPoint = computed(() => store.state.selectedPoint);
+
     function initYandexMap(mapRef) {
-      let coords = [];
-      //если город выбран, берутся координаты города и подставляются в центр карты
-      if (props.chosenCityObj?.coords) {
+      let coords = []; //сюда будут записываться координаты центра карты
+      let rateZoom = null; //сюда будет записываться величина зума карты
+      //если выбран пункт выдачи, то подставляются координаты этого пункта
+      if (Object.keys(selectedPoint.value).length !== 0) {
+          const foundPoint = props.chosenCityObj.points.find(
+              (point) => point.id === selectedPoint.value.id
+          );
+          coords = foundPoint.coordsPoint;
+          rateZoom = 15;
+      }
+      //иначе если выбран город, то подставляются координаты этого города
+      else if (Object.keys(selectedCity.value).length !== 0) {
         coords = props.chosenCityObj.coords;
+        rateZoom = 12;
       }
-      //иначе подставляются по-умолчанию координаты Москвы
+      //иначе подставляются координаты Географический центр России
       else {
-        coords = [55.75322, 37.622513];
+        coords = [67.010134, 94.337659];
+        rateZoom = 3;
       }
+
       const myMap = new ymaps.Map(mapRef, {
         center: coords, //координаты центра карты
-        zoom: 12, //зум карты
+        zoom: rateZoom, //зум карты
         controls: [], //убираем стандартные элементы управления на карте
       });
       // добавление маркеров с изображением из макета
@@ -65,6 +82,8 @@ export default {
     return {
       ymaps,
       mapRef,
+      selectedCity,
+      selectedPoint,
     };
   },
 };
