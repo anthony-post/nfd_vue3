@@ -21,9 +21,6 @@
       />
     </div>
     <p class="place__text">Выбрать на карте</p>
-    <!-- <div class="place__pic">
-      <img src="../assets/map.jpg" alt="карта" />
-    </div> -->
     <div class="map-wrp">
       <MapComponent :key="componentKey" :chosenCityObj="chosenCityObj" />
     </div>
@@ -147,16 +144,8 @@ export default {
     const selectedCity = computed(() => store.state.selectedCity);
     const selectedPoint = computed(() => store.state.selectedPoint);
 
-    //TO DO выбранный объект города c координатми города и его пунктов выдачи
+    //выбранный объект города c координатми города и его пунктов выдачи
     const chosenCityObj = computed(() => {
-        //Этот вариант почему-то не отрабатывает и выдает ошибку в консоле
-        // let newObjCity = {};
-        // const foundCity = cityListCoords.find(
-        //   (city) => city.id === selectedCity.value.id
-        // );
-        // newObjCity = { ...selectedCity.value, coords: foundCity.coords, points: newPointListWithCoordsArr.value };
-        // return newObjCity;
-
       let newObjCity = {};
       for (var i = 0; i < cityListCoords.length; i++) {
         if (selectedCity.value.id === cityListCoords[i].id) {
@@ -172,7 +161,7 @@ export default {
       return newObjCity;
     });
 
-    //TO DO добавить координаты пунктов выдачи в полученный массив с объектами пунктов выдачи
+    //добавление координат пунктов выдачи в отфильтрованный массив с объектами пунктов выдачи
     const newPointListWithCoordsArr = computed(() => {
       return FILTERED_POINTLIST.value.map((item) => {
         const foundPoint = pointListCoords.find(
