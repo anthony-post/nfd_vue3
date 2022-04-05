@@ -6,16 +6,12 @@ export default createStore({
     //API
     cityList: [],
     pointList: [],
+    carList: [],
     //USER SELECTED
     selectedCity: {},
     selectedPoint: {},
-    // selectedCar: {},
-    selectedCar: {
-      id: 1,
-      name: "Aston Martin",
-      priceMin: 8000,
-      priceMax: 15000,
-    }, //тестовый объект для переключения вкладки
+    checkedCategoryCars: "",
+    selectedCar: {},
     selectedColor: "",
     dateFrom: 0,
     dateTo: 0,
@@ -29,6 +25,10 @@ export default createStore({
     SET_POINTLIST_TO_STATE: (state, pointList) => {
       state.pointList = pointList.data.data;
     },
+    SET_CARLIST_TO_STATE: (state, carList) => {
+      state.carList = carList.data.data;
+    },
+
     //CITY
     SET_SELECTEDCITY(state, selectedCity) {
       state.selectedCity = selectedCity;
@@ -42,6 +42,20 @@ export default createStore({
     },
     RESET_SELECTEDPOINT(state) {
       state.selectedPoint = {};
+    },
+    //CATEGORY CAR
+    SET_CHECKEDCATEGORYCAR(state, checkedCategoryCars) {
+      state.checkedCategoryCars = checkedCategoryCars;
+    },
+    RESET_CHECKEDCATEGORYCAR(state) {
+      state.checkedCategoryCars = "";
+    },
+    //CAR
+    SET_SELECTEDCAR(state, selectedCar) {
+      state.selectedCar = selectedCar;
+    },
+    RESET_SELECTEDCAR(state) {
+      state.selectedCar = {};
     },
   },
   actions: {
@@ -70,6 +84,19 @@ export default createStore({
           return error;
         });
     },
+    GET_CARLIST_FROM_API({ commit }) {
+      apiServices
+        .getCars()
+        .then((carList) => {
+          commit("SET_CARLIST_TO_STATE", carList);
+          return carList;
+        })
+        .catch((error) => {
+          console.log(error);
+          return error;
+        });
+    },
+
     //SELECTED
     GET_SELECTEDCITY({ commit }, chosenItem) {
       if (chosenItem) {
@@ -83,6 +110,20 @@ export default createStore({
         commit("SET_SELECTEDPOINT", chosenItem);
       } else {
         commit("RESET_SELECTEDPOINT");
+      }
+    },
+    GET_CHECKEDCATEGORY({ commit }, chosenItem) {
+      if (chosenItem) {
+        commit("SET_CHECKEDCATEGORYCAR", chosenItem);
+      } else {
+        commit("RESET_CHECKEDCATEGORYCAR");
+      }
+    },
+    GET_SELECTEDCAR({ commit }, chosenItem) {
+      if (chosenItem) {
+        commit("SET_SELECTEDCAR", chosenItem);
+      } else {
+        commit("RESET_SELECTEDCAR");
       }
     },
   },

@@ -3,17 +3,8 @@ import axiosConfig from "./axiosConfig";
 const url = {
   CITY: "/db/city",
   POINT: "/db/point",
+  CAR: "/db/car",
 };
-
-// export const appApiService = {
-//     getCities: () => axiosConfig
-//         .get(url.CITY)
-//         .then((res) => res.data),
-// };
-
-// export const appApiService = {
-//     getCities: () => axiosConfig.get(url.CITY)
-// };
 
 export default {
   getCities() {
@@ -21,5 +12,8 @@ export default {
   },
   getPoints() {
     return axiosConfig.get(url.POINT);
+  },
+  getCars() {
+    return axiosConfig.get(url.CAR);
   },
 };
