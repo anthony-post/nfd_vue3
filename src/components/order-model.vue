@@ -14,7 +14,8 @@
         v-model="categoryCars"
       />
     </div>
-    <ul class="cars-list">
+    <Preloader v-if="togglePreloader" />
+    <ul class="cars-list" v-else>
       <li
         class="cars__item"
         v-for="car in filteredCars"
@@ -39,11 +40,13 @@
 import { useStore } from "vuex";
 import { computed } from "vue";
 import VRadio from "@/components/v-radio.vue";
+import Preloader from "@/components/v-preloader.vue";
 
 export default {
   name: "order-model",
   components: {
     VRadio,
+    Preloader,
   },
   setup(props, context) {
     //const
@@ -58,6 +61,13 @@ export default {
     const carList = computed(() => store.state.carList);
     const checkedCategoryCars = computed(() => store.state.checkedCategoryCars);
     const selectedCar = computed(() => store.state.selectedCar);
+
+    const togglePreloader = computed(() => {
+      if (carList.value.length > 0) {
+        return false;
+      }
+      return true;
+    });
 
     const filteredCars = computed(() => {
       if (!checkedCategoryCars.value) {
@@ -83,7 +93,8 @@ export default {
     //methods
     const GET_CARLIST_FROM_API = () => store.dispatch("GET_CARLIST_FROM_API");
 
-    const setSelectedCar = chosenCar => store.dispatch("GET_SELECTEDCAR", chosenCar);
+    const setSelectedCar = (chosenCar) =>
+      store.dispatch("GET_SELECTEDCAR", chosenCar);
 
     const resetSelectedCategoryCar = () => {
       store.dispatch("GET_CHECKEDCATEGORY");
@@ -99,6 +110,7 @@ export default {
       carList,
       checkedCategoryCars,
       selectedCar,
+      togglePreloader,
       filteredCars,
       categoryCars,
       setSelectedCar,
@@ -115,16 +127,26 @@ export default {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  margin: 0 0 48px 0;
+
+  @media #{$media} and (min-width: $mobile-min) and (max-width: $mobile-max) {
+    margin: 0 0 24px 0;
+  }
 }
 
 .cars-list {
   margin: 0;
-  padding: 48px 0 0 0;
+  padding: 0;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   overflow: scroll;
   height: calc(100vh - 274px);
+
+  @media #{$media} and (min-width: $mobile-min) and (max-width: $mobile-max) {
+    overflow: scroll;
+    height: 40vh;
+  }
 }
 
 .cars__item {
@@ -133,6 +155,10 @@ export default {
   border: 1px solid $color-grey-light;
   box-sizing: border-box;
   padding: 16px;
+
+  @media #{$media} and (min-width: $mobile-min) and (max-width: $mobile-max) {
+    width: 285px;
+  }
 }
 
 .cars__item:hover {
@@ -165,16 +191,5 @@ export default {
 
 .cars__img {
   max-width: 100%;
-}
-
-@media #{$media} and (min-width: $mobile-min) and (max-width: $mobile-max) {
-  .cars-list {
-    overflow: scroll;
-    height: 40vh;
-  }
-
-  .cars__item {
-    width: 285px;
-  }
 }
 </style>
