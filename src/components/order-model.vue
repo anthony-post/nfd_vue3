@@ -81,19 +81,15 @@ export default {
     });
 
     //methods
-    function GET_CARLIST_FROM_API() {
-      store.dispatch("GET_CARLIST_FROM_API");
-    }
+    const GET_CARLIST_FROM_API = () => store.dispatch("GET_CARLIST_FROM_API");
 
-    function setSelectedCar(chosenCar) {
-      store.dispatch("GET_SELECTEDCAR", chosenCar);
-    }
+    const setSelectedCar = chosenCar => store.dispatch("GET_SELECTEDCAR", chosenCar);
 
-    function resetSelectedCategoryCar() {
+    const resetSelectedCategoryCar = () => {
       store.dispatch("GET_CHECKEDCATEGORY");
       store.dispatch("GET_SELECTEDCAR");
       context.emit("on-tab-reset", "order-model");
-    }
+    };
 
     //API
     GET_CARLIST_FROM_API();
