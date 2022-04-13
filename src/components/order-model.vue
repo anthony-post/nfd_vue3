@@ -3,15 +3,15 @@
     <div class="radio-list">
       <VRadio
         label="Все модели"
-        v-model="categoryCars"
+        v-model:checkedValue="categoryCars"
         @change="resetSelectedCategoryCar"
       />
       <VRadio
-        v-for="category in categories"
+        v-for="category in categoryList"
         :key="category.id"
         :label="category.name"
         :value="category.id"
-        v-model="categoryCars"
+        v-model:checkedValue="categoryCars"
       />
     </div>
     <Preloader v-if="togglePreloader" />
@@ -48,16 +48,12 @@ export default {
     VRadio,
     Preloader,
   },
-  setup(props, context) {
+  setup(_, context) {
     //const
     const store = useStore();
-    const categories = [
-      { id: "600598a3ad015e0bb699774c", name: "Эконом" },
-      { id: "60b943492aed9a0b9b7ed335", name: "Премиум" },
-      { id: "5fd91add935d4e0be16a3c4b", name: "Спорт" },
-    ];
 
     //computed
+    const categoryList = computed(() => store.state.categoryList);
     const carList = computed(() => store.state.carList);
     const checkedCategoryCars = computed(() => store.state.checkedCategoryCars);
     const selectedCar = computed(() => store.state.selectedCar);
@@ -91,6 +87,8 @@ export default {
     });
 
     //methods
+    const GET_CATEGORYLIST_FROM_API = () => store.dispatch("GET_CATEGORYLIST_FROM_API");
+
     const GET_CARLIST_FROM_API = () => store.dispatch("GET_CARLIST_FROM_API");
 
     const setSelectedCar = (chosenCar) =>
@@ -103,10 +101,12 @@ export default {
     };
 
     //API
+    GET_CATEGORYLIST_FROM_API();
+
     GET_CARLIST_FROM_API();
 
     return {
-      categories,
+      categoryList,
       carList,
       checkedCategoryCars,
       selectedCar,

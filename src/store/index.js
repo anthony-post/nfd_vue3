@@ -6,6 +6,7 @@ export default createStore({
     //API
     cityList: [],
     pointList: [],
+    categoryList: [],
     carList: [],
     //USER SELECTED
     selectedCity: {},
@@ -24,6 +25,9 @@ export default createStore({
     },
     SET_POINTLIST_TO_STATE: (state, pointList) => {
       state.pointList = pointList.data.data;
+    },
+    SET_CATEGORYLIST_TO_STATE: (state, categoryList) => {
+      state.categoryList = categoryList.data.data;
     },
     SET_CARLIST_TO_STATE: (state, carList) => {
       state.carList = carList.data.data;
@@ -78,6 +82,19 @@ export default createStore({
         .then((pointList) => {
           commit("SET_POINTLIST_TO_STATE", pointList);
           return pointList;
+        })
+        .catch((error) => {
+          console.log(error);
+          return error;
+        });
+    },
+    GET_CATEGORYLIST_FROM_API({ commit }) {
+      apiServices
+        .getCategory()
+
+        .then((categoryList) => {
+          commit("SET_CATEGORYLIST_TO_STATE", categoryList);
+          return categoryList;
         })
         .catch((error) => {
           console.log(error);

@@ -6,7 +6,7 @@
       type="radio"
       :checked="isChecked"
       :value="value"
-      @change="$emit('update:modelValue', $event.target.value)"
+      @change="$emit('update:checkedValue', $event.target.value)"
     />
     <span class="checkmark"></span>
   </label>
@@ -23,7 +23,7 @@ export default {
       default: "",
       required: true,
     },
-    modelValue: {
+    checkedValue: {
       type: String,
       default: "",
     },
@@ -33,7 +33,7 @@ export default {
     },
   },
   setup(props) {
-    const isChecked = computed(() => props.modelValue === props.value);
+    const isChecked = computed(() => props.checkedValue === props.value);
 
     return {
       isChecked,

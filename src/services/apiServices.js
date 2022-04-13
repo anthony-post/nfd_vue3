@@ -3,6 +3,7 @@ import axiosConfig from "./axiosConfig";
 const url = {
   CITY: "/db/city",
   POINT: "/db/point",
+  CATEGORY: "/db/category",
   CAR: "/db/car",
 };
 
@@ -12,6 +13,9 @@ export default {
   },
   getPoints() {
     return axiosConfig.get(url.POINT);
+  },
+  getCategory() {
+    return axiosConfig.get(url.CATEGORY);
   },
   getCars() {
     return axiosConfig.get(url.CAR);
