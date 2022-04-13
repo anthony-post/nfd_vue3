@@ -66,16 +66,27 @@ export default {
     });
 
     const filteredCars = computed(() => {
-      if (!checkedCategoryCars.value) {
+      if(!checkedCategoryCars.value) {
         return carList.value;
       } else {
-        return carList.value.filter((car) => {
-          if (car?.categoryId?.id) {
-            return car.categoryId.id.includes(checkedCategoryCars.value);
-          }
-        });
+        //TO DO ???
+        let filteredList = [];
+        return filteredList;
       }
     });
+
+//рабочий фильтр списка авто по категориям (без запроса по API)
+    // const filteredCars = computed(() => {
+    //   if (!checkedCategoryCars.value) {
+    //     return carList.value;
+    //   } else {
+    //     return carList.value.filter((car) => {
+    //       if (car?.categoryId?.id) {
+    //         return car.categoryId.id.includes(checkedCategoryCars.value);
+    //       }
+    //     });
+    //   }
+    // });
 
     const categoryCars = computed({
       get: () => {
@@ -83,6 +94,9 @@ export default {
       },
       set: (chosenCategoryCar) => {
         store.dispatch("GET_CHECKEDCATEGORY", chosenCategoryCar);
+
+        //при выборе категории вызываем action для получения фильтрованного списка авто
+        store.dispatch("GET_FILTEREDCARLIST_FROM_API", chosenCategoryCar);
       },
     });
 

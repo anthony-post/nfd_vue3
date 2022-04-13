@@ -20,4 +20,12 @@ export default {
   getCars() {
     return axiosConfig.get(url.CAR);
   },
+  // запрос с параметром категории авто
+  getFilteredCars(categoryToFilter) {
+    return axiosConfig.get(url.CAR, {
+      params: {
+        categoryId: categoryToFilter,
+      }
+    });
+  },
 };

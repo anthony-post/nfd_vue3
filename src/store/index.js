@@ -113,6 +113,23 @@ export default createStore({
           return error;
         });
     },
+    //запрос списка авто с фильтром по категории
+    GET_FILTEREDCARLIST_FROM_API({ commit }, categoryToFilter) {
+
+      apiServices.getFilteredCars(categoryToFilter)
+
+          .then((carFilteredList) => {
+            
+            //TO DO ???
+            commit("SET_CARFILTEREDLIST_TO_STATE", carFilteredList);
+            return carFilteredList;
+          })
+          .catch((error) => {
+            console.log(error);
+            return error;
+          });
+
+    },
 
     //SELECTED
     GET_SELECTEDCITY({ commit }, chosenItem) {
