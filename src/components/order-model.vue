@@ -104,8 +104,12 @@ export default {
     };
 
     //API
-    GET_CATEGORYLIST_FROM_API();
-    GET_FILTEREDCARLIST_FROM_API(categoryCars.value);
+    const getData = async () => {
+      await GET_CATEGORYLIST_FROM_API();
+      await GET_FILTEREDCARLIST_FROM_API(categoryCars.value);
+    };
+
+    getData();
     // GET_CATEGORYLIST_FROM_API();
     // GET_CARLIST_FROM_API();
 
