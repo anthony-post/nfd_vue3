@@ -14,7 +14,7 @@ export default {
   getPoints() {
     return axiosConfig.get(url.POINT);
   },
-  getCategory() {
+  getCategories() {
     return axiosConfig.get(url.CATEGORY);
   },
   // getCars() {
