@@ -8,7 +8,6 @@ export default createStore({
     //API
     cityList: [],
     pointList: [],
-    // categoryList: [],
     // carList: [],
     categoryList: [],
     cars: {},
@@ -58,12 +57,12 @@ export default createStore({
       if(!categoryId) {
         const carsAllCategory = state.cars["no-filter"];
 
-        carsAllCategory?.value.push(...carsData);
+        carsAllCategory.value.push(...carsData.data.data);
         carsAllCategory.page++;
       } else {
         const carsByCategory = state.cars[categoryId];
 
-        carsByCategory?.value.push(...carsData);
+        carsByCategory.value.push(...carsData.data.data);
         carsByCategory.page++;
       }
     },
@@ -140,8 +139,10 @@ export default createStore({
     //     });
     // },
     async GET_CATEGORYLIST_FROM_API({ commit }) {
+
       const categories = await apiServices.getCategories();
       commit("SET_CATEGORYLIST_TO_STATE", categories.data.data);
+
     },
     // GET_CARLIST_FROM_API({ commit }) {
     //   apiServices
@@ -156,15 +157,17 @@ export default createStore({
     //     });
     // },
     async GET_FILTEREDCARLIST_FROM_API({ commit, state }, categoryId) {
-      const page = state.cars[categoryId]?.page;
 
-      if(state.cars["no-filter"]) {
+      if(categoryId === "no-filter") {
+        const page = state.cars["no-filter"]?.page;
         const carsData = await apiServices.getCars({ page, limit });
         commit("SET_CARS_DATA", { carsData });
       } else {
+        const page = state.cars[categoryId]?.page;
         const carsData = await apiServices.getCars({ categoryId, page, limit });
         commit("SET_CARS_DATA", { carsData, categoryId });
       }
+
     },
 
     //SELECTED
@@ -211,7 +214,11 @@ export default createStore({
       }
     },
     FILTERED_CARSDATA_BY_CATEGORY: (state) => (categoryId) => {
-      return state.cars[categoryId]?.value || [];
+      if(categoryId === "no-filter") {
+        return state.cars["no-filter"]?.value;
+      } else {
+        return state.cars[categoryId]?.value;
+      }
     },
   },
 });

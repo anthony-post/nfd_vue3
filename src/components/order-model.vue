@@ -2,23 +2,24 @@
   <div>
     <div class="radio-list">
       <VRadio
-        label="Все модели"
         v-model:checkedValue="categoryCars"
+        label="Все модели"
+        value="no-filter"
         @change="resetSelectedCategoryCar"
       />
       <VRadio
+        v-model:checkedValue="categoryCars"
         v-for="category in categoryList"
         :key="category.id"
         :label="category.name"
         :value="category.id"
-        v-model:checkedValue="categoryCars"
       />
     </div>
     <!-- <Preloader v-if="togglePreloader" /> -->
     <ul class="cars-list">
       <li
         class="cars__item"
-        v-for="car in carListByCategory"
+        v-for="car in filteredCarList"
         :key="car.id"
         :class="{ cars__item_active: selectedCar.id === car.id }"
         @click="setSelectedCar(car)"
@@ -54,9 +55,9 @@ export default {
 
     //computed
     const categoryList = computed(() => store.state.categoryList);
-    const carListByCategory = computed(() => store.getters.FILTERED_CARSDATA_BY_CATEGORY(categoryCars.value));
+    const filteredCarList = computed(() => store.getters.FILTERED_CARSDATA_BY_CATEGORY(categoryCars.value));
     // const carList = computed(() => store.state.carList);
-    const checkedCategoryCars = computed(() => store.state.checkedCategoryCars);
+    const checkedCategoryCars = computed(() => store.state.checkedCategoryCars || "no-filter");
     const selectedCar = computed(() => store.state.selectedCar);
 
     // const togglePreloader = computed(() => {
@@ -90,7 +91,7 @@ export default {
 
     //methods
     const GET_CATEGORYLIST_FROM_API = () => store.dispatch("GET_CATEGORYLIST_FROM_API");
-    const GET_FILTEREDCARLIST_FROM_API = (chosenCategoryCar) => store.dispatch("GET_FILTEREDCARLIST_FROM_API", chosenCategoryCar);
+    const GET_FILTEREDCARLIST_FROM_API = chosenCategoryCar => store.dispatch("GET_FILTEREDCARLIST_FROM_API", chosenCategoryCar);
 
     // const GET_CARLIST_FROM_API = () => store.dispatch("GET_CARLIST_FROM_API");
 
@@ -110,12 +111,13 @@ export default {
     };
 
     getData();
+
     // GET_CATEGORYLIST_FROM_API();
     // GET_CARLIST_FROM_API();
 
     return {
       categoryList,
-      carListByCategory,
+      filteredCarList,
       // carList,
       checkedCategoryCars,
       selectedCar,
