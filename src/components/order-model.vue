@@ -59,12 +59,12 @@ export default {
     const checkedCategoryCars = computed(() => store.state.checkedCategoryCars);
     const selectedCar = computed(() => store.state.selectedCar);
 
-    const togglePreloader = computed(() => {
-      if (carList.value.length > 0) {
-        return false;
-      }
-      return true;
-    });
+    // const togglePreloader = computed(() => {
+    //   if (carList.value.length > 0) {
+    //     return false;
+    //   }
+    //   return true;
+    // });
 
 //рабочий фильтр списка авто по категориям (без запроса по API)
     // const filteredCars = computed(() => {
