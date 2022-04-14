@@ -34,7 +34,7 @@ export default createStore({
 
     //категории
     SET_CATEGORYLIST_TO_STATE: (state, categories) => {
-      state.categoryList = categories.data.data;
+      state.categoryList = categories;
 
       categories.forEach((category) => {
         state.cars[category.id] = {
@@ -128,7 +128,7 @@ export default createStore({
     // },
     async GET_CATEGORYLIST_FROM_API({ commit }) {
       const categories = await apiServices.getCategories();
-      commit("SET_CATEGORYLIST_TO_STATE", categories);
+      commit("SET_CATEGORYLIST_TO_STATE", categories.data.data);
     },
     // GET_CARLIST_FROM_API({ commit }) {
     //   apiServices
