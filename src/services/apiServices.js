@@ -17,15 +17,12 @@ export default {
   getCategory() {
     return axiosConfig.get(url.CATEGORY);
   },
-  getCars() {
-    return axiosConfig.get(url.CAR);
-  },
-  // запрос с параметром категории авто
-  getFilteredCars(categoryToFilter) {
+  // getCars() {
+  //   return axiosConfig.get(url.CAR);
+  // },
+  getCars(params = {}) {
     return axiosConfig.get(url.CAR, {
-      params: {
-        categoryId: categoryToFilter,
-      }
+      params,
     });
   },
 };

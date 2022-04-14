@@ -1,13 +1,18 @@
 import { createStore } from "vuex";
 import apiServices from "../services/apiServices";
 
+const limit = 5;
+
 export default createStore({
   state: {
     //API
     cityList: [],
     pointList: [],
+    // categoryList: [],
+    // carList: [],
     categoryList: [],
-    carList: [],
+    cars: {},
+
     //USER SELECTED
     selectedCity: {},
     selectedPoint: {},
@@ -26,12 +31,32 @@ export default createStore({
     SET_POINTLIST_TO_STATE: (state, pointList) => {
       state.pointList = pointList.data.data;
     },
-    SET_CATEGORYLIST_TO_STATE: (state, categoryList) => {
-      state.categoryList = categoryList.data.data;
+
+    //категории
+    SET_CATEGORYLIST_TO_STATE: (state, categories) => {
+      state.categoryList = categories.data.data;
+
+      categories.forEach((category) => {
+        state.cars[category.id] = {
+          value: [],
+          page: 0,
+        };
+      });
     },
-    SET_CARLIST_TO_STATE: (state, carList) => {
-      state.carList = carList.data.data;
+    // SET_CATEGORYLIST_TO_STATE: (state, categoryList) => {
+    //   state.categoryList = categoryList.data.data;
+    // },
+
+    //авто
+    SET_CARS_DATA: (state, { carsData, categoryId }) => {
+      const carsByCategory = state.cars[categoryId];
+
+      carsByCategory.value.push(...carsData);
+      carsByCategory.page++;
     },
+    // SET_CARLIST_TO_STATE: (state, carList) => {
+    //   state.carList = carList.data.data;
+    // },
 
     //CITY
     SET_SELECTEDCITY(state, selectedCity) {
@@ -88,47 +113,40 @@ export default createStore({
           return error;
         });
     },
-    GET_CATEGORYLIST_FROM_API({ commit }) {
-      apiServices
-        .getCategory()
+    // GET_CATEGORYLIST_FROM_API({ commit }) {
+    //   apiServices
+    //     .getCategory()
 
-        .then((categoryList) => {
-          commit("SET_CATEGORYLIST_TO_STATE", categoryList);
-          return categoryList;
-        })
-        .catch((error) => {
-          console.log(error);
-          return error;
-        });
+    //     .then((categoryList) => {
+    //       commit("SET_CATEGORYLIST_TO_STATE", categoryList);
+    //       return categoryList;
+    //     })
+    //     .catch((error) => {
+    //       console.log(error);
+    //       return error;
+    //     });
+    // },
+    async GET_CATEGORYLIST_FROM_API({ commit }) {
+      const categories = await apiServices.getCategories();
+      commit("SET_CATEGORYLIST_TO_STATE", categories);
     },
-    GET_CARLIST_FROM_API({ commit }) {
-      apiServices
-        .getCars()
-        .then((carList) => {
-          commit("SET_CARLIST_TO_STATE", carList);
-          return carList;
-        })
-        .catch((error) => {
-          console.log(error);
-          return error;
-        });
-    },
-    //запрос списка авто с фильтром по категории
-    GET_FILTEREDCARLIST_FROM_API({ commit }, categoryToFilter) {
+    // GET_CARLIST_FROM_API({ commit }) {
+    //   apiServices
+    //     .getCars()
+    //     .then((carList) => {
+    //       commit("SET_CARLIST_TO_STATE", carList);
+    //       return carList;
+    //     })
+    //     .catch((error) => {
+    //       console.log(error);
+    //       return error;
+    //     });
+    // },
+    async GET_FILTEREDCARLIST_FROM_API({ commit, state }, categoryId) {
+      const page = state.cars[categoryId].page;
 
-      apiServices.getFilteredCars(categoryToFilter)
-
-          .then((carFilteredList) => {
-            
-            //TO DO ???
-            commit("SET_CARFILTEREDLIST_TO_STATE", carFilteredList);
-            return carFilteredList;
-          })
-          .catch((error) => {
-            console.log(error);
-            return error;
-          });
-
+      const carsData = await apiServices.getCars({categoryId, page, limit});
+      commit("SET_CARS_DATA", { carsData, categoryId });
     },
 
     //SELECTED
@@ -173,6 +191,9 @@ export default createStore({
         const arr = [];
         return arr;
       }
+    },
+    FILTERED_CARSDATA_BY_CATEGORY: (state) => (categoryId) => {
+      return state.cars[categoryId].value;
     },
   },
 });
