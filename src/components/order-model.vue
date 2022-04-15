@@ -33,8 +33,8 @@
           :alt="car.thumbnail.originalname"
         />
       </li>
+      <Observer @intersect="intersected" />
     </ul>
-    <Observer @intersect="intersected" />
   </div>
 </template>
 
@@ -58,9 +58,13 @@ export default {
 
     //computed
     const categoryList = computed(() => store.state.categoryList);
-    const filteredCarList = computed(() => store.getters.FILTERED_CARSDATA_BY_CATEGORY(categoryCars.value));
+    const filteredCarList = computed(() =>
+      store.getters.FILTERED_CARSDATA_BY_CATEGORY(categoryCars.value)
+    );
     // const carList = computed(() => store.state.carList);
-    const checkedCategoryCars = computed(() => store.state.checkedCategoryCars || "no-filter");
+    const checkedCategoryCars = computed(
+      () => store.state.checkedCategoryCars || "no-filter"
+    );
     const selectedCar = computed(() => store.state.selectedCar);
 
     // const togglePreloader = computed(() => {
@@ -70,7 +74,7 @@ export default {
     //   return true;
     // });
 
-//рабочий фильтр списка авто по категориям (без запроса по API)
+    //рабочий фильтр списка авто по категориям (без запроса по API)
     // const filteredCars = computed(() => {
     //   if (!checkedCategoryCars.value) {
     //     return carList.value;
@@ -93,8 +97,10 @@ export default {
     });
 
     //methods
-    const GET_CATEGORYLIST_FROM_API = () => store.dispatch("GET_CATEGORYLIST_FROM_API");
-    const GET_FILTEREDCARLIST_FROM_API = chosenCategoryCar => store.dispatch("GET_FILTEREDCARLIST_FROM_API", chosenCategoryCar);
+    const GET_CATEGORYLIST_FROM_API = () =>
+      store.dispatch("GET_CATEGORYLIST_FROM_API");
+    const GET_FILTEREDCARLIST_FROM_API = (chosenCategoryCar) =>
+      store.dispatch("GET_FILTEREDCARLIST_FROM_API", chosenCategoryCar);
 
     // const GET_CARLIST_FROM_API = () => store.dispatch("GET_CARLIST_FROM_API");
 
@@ -120,7 +126,7 @@ export default {
 
     //intersection observer
     const intersected = async () => {
-        await GET_FILTEREDCARLIST_FROM_API(categoryCars.value);
+      await GET_FILTEREDCARLIST_FROM_API(categoryCars.value);
     };
 
     return {

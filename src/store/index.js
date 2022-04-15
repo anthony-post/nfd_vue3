@@ -53,8 +53,7 @@ export default createStore({
 
     //авто
     SET_CARS_DATA: (state, { carsData, categoryId }) => {
-
-      if(!categoryId) {
+      if (!categoryId) {
         const carsAllCategory = state.cars["no-filter"];
 
         carsAllCategory.value.push(...carsData.data.data);
@@ -139,10 +138,8 @@ export default createStore({
     //     });
     // },
     async GET_CATEGORYLIST_FROM_API({ commit }) {
-
       const categories = await apiServices.getCategories();
       commit("SET_CATEGORYLIST_TO_STATE", categories.data.data);
-
     },
     // GET_CARLIST_FROM_API({ commit }) {
     //   apiServices
@@ -157,8 +154,7 @@ export default createStore({
     //     });
     // },
     async GET_FILTEREDCARLIST_FROM_API({ commit, state }, categoryId) {
-
-      if(categoryId === "no-filter") {
+      if (categoryId === "no-filter") {
         const page = state.cars["no-filter"]?.page;
         const carsData = await apiServices.getCars({ page, limit });
         commit("SET_CARS_DATA", { carsData });
@@ -167,7 +163,6 @@ export default createStore({
         const carsData = await apiServices.getCars({ categoryId, page, limit });
         commit("SET_CARS_DATA", { carsData, categoryId });
       }
-
     },
 
     //SELECTED
@@ -214,7 +209,7 @@ export default createStore({
       }
     },
     FILTERED_CARSDATA_BY_CATEGORY: (state) => (categoryId) => {
-      if(categoryId === "no-filter") {
+      if (categoryId === "no-filter") {
         return state.cars["no-filter"]?.value;
       } else {
         return state.cars[categoryId]?.value;
