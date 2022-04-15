@@ -34,6 +34,7 @@
         />
       </li>
     </ul>
+    <Observer @intersect="intersected" />
   </div>
 </template>
 
@@ -42,12 +43,14 @@ import { useStore } from "vuex";
 import { computed } from "vue";
 import VRadio from "@/components/v-radio.vue";
 // import Preloader from "@/components/v-preloader.vue";
+import Observer from "@/components/observer.vue";
 
 export default {
   name: "order-model",
   components: {
     VRadio,
     // Preloader,
+    Observer,
   },
   setup(_, context) {
     //const
@@ -107,7 +110,7 @@ export default {
     //API
     const getData = async () => {
       await GET_CATEGORYLIST_FROM_API();
-      await GET_FILTEREDCARLIST_FROM_API(categoryCars.value);
+      // await GET_FILTEREDCARLIST_FROM_API(categoryCars.value);
     };
 
     getData();
@@ -115,9 +118,15 @@ export default {
     // GET_CATEGORYLIST_FROM_API();
     // GET_CARLIST_FROM_API();
 
+    //intersection observer
+    const intersected = async () => {
+        await GET_FILTEREDCARLIST_FROM_API(categoryCars.value);
+    };
+
     return {
       categoryList,
       filteredCarList,
+      intersected,
       // carList,
       checkedCategoryCars,
       selectedCar,
