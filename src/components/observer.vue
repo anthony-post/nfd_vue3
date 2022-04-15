@@ -21,7 +21,6 @@ export default {
 
       const rootDiv = document.querySelector(".observer");
       observer.value.observe(rootDiv);
-      // observer.value.observe($el);
     });
 
     onUnmounted(() => {
@@ -32,21 +31,5 @@ export default {
       observer,
     };
   },
-  // data: () => ({
-  //   observer: null
-  // }),
-  // mounted() {
-  //   const options = this.options || {};
-  //   this.observer = new IntersectionObserver(([entry]) => {
-  //     if (entry && entry.isIntersecting) {
-  //       this.$emit('intersect');
-  //     }
-  //   }, options);
-
-  //   this.observer.observe(this.$el);
-  // },
-  // destroyed() {
-  //   observer.disconnect();
-  // }
 };
 </script>
