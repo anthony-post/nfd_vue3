@@ -10,6 +10,7 @@ export default createStore({
     pointList: [],
     categoryList: [],
     cars: {},
+    rateList: [],
 
     //USER SELECTED
     selectedCity: {},
@@ -17,19 +18,29 @@ export default createStore({
     checkedCategoryCars: "",
     selectedCar: {},
     selectedColor: "",
-    dateFrom: 0,
-    dateTo: 0,
+    selectedDateFrom: "Введите дату и время...", //дата для отображения в инпуте
+    selectedTimeFrom: "", //время для отображения в инпуте
+    selectedDateTo: "Введите дату и время...", //дата для отображения в инпуте
+    selectedTimeTo: "", //время для отображения в инпуте
+    dateFrom: 0, //дата в миллисекундах
+    dateTo: 0, //дата в миллисекундах
+    rentalDuration: "", //длительнотсь аренды
     selectedRate: "",
+    selectedTank: false,
+    selectedBabyChair: false,
+    selectedRightHandDrive: false,
+    priceSummary: 0,
   },
   mutations: {
     //API
+    //города
     SET_CITYLIST_TO_STATE: (state, cityList) => {
       state.cityList = cityList.data.data;
     },
+    //пункты выдачи
     SET_POINTLIST_TO_STATE: (state, pointList) => {
       state.pointList = pointList.data.data;
     },
-
     //категории
     SET_CATEGORYLIST_TO_STATE: (state, categories) => {
       state.categoryList = categories;
@@ -46,22 +57,30 @@ export default createStore({
         };
       });
     },
-
     //авто
     SET_CARS_DATA: (state, { carsData, categoryId }) => {
       if (!categoryId) {
         const carsAllCategory = state.cars["no-filter"];
-
         carsAllCategory.value.push(...carsData.data.data);
-        carsAllCategory.page++;
+
+        if (carsAllCategory.value.length <= carsData.data.count) {
+          carsAllCategory.page++;
+        }
       } else {
         const carsByCategory = state.cars[categoryId];
-
         carsByCategory.value.push(...carsData.data.data);
-        carsByCategory.page++;
+
+        if (carsByCategory.value.length <= carsData.data.count) {
+          carsByCategory.page++;
+        }
       }
     },
+    //тарифы
+    SET_RATE_TO_STATE: (state, rateList) => {
+      state.rateList = rateList.data.data;
+    },
 
+    //SELECTED
     //CITY
     SET_SELECTEDCITY(state, selectedCity) {
       state.selectedCity = selectedCity;
@@ -89,6 +108,105 @@ export default createStore({
     },
     RESET_SELECTEDCAR(state) {
       state.selectedCar = {};
+    },
+    //COLOR
+    SET_SELECTEDCOLOR(state, selectedColor) {
+      state.selectedColor = selectedColor;
+    },
+    RESET_SELECTEDCOLOR(state) {
+      state.selectedColor = "";
+    },
+    //DATEFROM
+    SET_SELECTEDDATEFROM(state, selectedDateFrom) {
+      state.selectedDateFrom = selectedDateFrom.dateString;
+      state.dateFrom = selectedDateFrom.value;
+    },
+    RESET_SELECTEDDATEFROM(state) {
+      state.selectedDateFrom = "Введите дату и время...";
+      state.dateFrom = 0;
+    },
+    //TIMEFROM
+    SET_SELECTEDTIMEFROM(state, selectedTimeFrom) {
+      state.selectedTimeFrom = selectedTimeFrom.dateString;
+      state.dateFrom = state.dateFrom + selectedTimeFrom.value;
+    },
+    RESET_SELECTEDTIMEFROM(state) {
+      state.selectedTimeFrom = "";
+      state.dateFrom = 0;
+    },
+    //DATETO
+    SET_SELECTEDDATETO(state, selectedDateTo) {
+      state.selectedDateTo = selectedDateTo.dateString;
+      state.dateTo = selectedDateTo.value;
+    },
+    RESET_SELECTEDDATETO(state) {
+      state.selectedDateTo = "Введите дату и время...";
+      state.dateTo = 0;
+    },
+    //TIMETO
+    SET_SELECTEDTIMETO(state, selectedTimeTo) {
+      state.selectedTimeTo = selectedTimeTo.dateString;
+      state.dateTo = state.dateTo + selectedTimeTo.value;
+    },
+    RESET_SELECTEDTIMETO(state) {
+      state.selectedTimeTo = "";
+      state.dateTo = 0;
+    },
+    //RENTAL DURATION
+    SET_RENTALDURATION(state, duration) {
+      //конвертация миллисекунд в количество дней, часов, минут
+      function convertToDays(milliSeconds) {
+        let days = Math.floor(milliSeconds / (86400 * 1000));
+        milliSeconds -= days * (86400 * 1000);
+        let hours = Math.floor(milliSeconds / (60 * 60 * 1000));
+        milliSeconds -= hours * (60 * 60 * 1000);
+        let minutes = Math.floor(milliSeconds / (60 * 1000));
+        return {
+          days,
+          hours,
+          minutes,
+        };
+      }
+
+      state.rentalDuration = convertToDays(duration);
+    },
+    RESET_RENTALDURATION(state) {
+      state.rentalDuration = "";
+    },
+    //RATE
+    SET_SELECTEDRATE(state, selectedRate) {
+      state.selectedRate = selectedRate;
+    },
+    RESET_SELECTEDRATE(state) {
+      state.selectedRate = "";
+    },
+    //TANK
+    SET_SELECTEDTANK(state, selectedTank) {
+      state.selectedTank = selectedTank;
+    },
+    RESET_SELECTEDTANK(state) {
+      state.selectedTank = false;
+    },
+    //BABY CHAIR
+    SET_SELECTEDBABYCHAIR(state, selectedBabyChair) {
+      state.selectedBabyChair = selectedBabyChair;
+    },
+    RESET_SELECTEDBABYCHAIR(state) {
+      state.selectedBabyChair = false;
+    },
+    //RIGHT HAND DRIVE
+    SET_SELECTEDRIGHTHANDDRIVE(state, selectedRightHandDrive) {
+      state.selectedRightHandDrive = selectedRightHandDrive;
+    },
+    RESET_SELECTEDRIGHTHANDDRIVE(state) {
+      state.selectedRightHandDrive = false;
+    },
+    //PRICE SUMMARY
+    SET_PRICESUMMARY(state, priceSummary) {
+      state.priceSummary = priceSummary;
+    },
+    RESET_PRICESUMMARY(state) {
+      state.priceSummary = 0;
     },
   },
   actions: {
@@ -132,6 +250,19 @@ export default createStore({
         commit("SET_CARS_DATA", { carsData, categoryId });
       }
     },
+    GET_RATE_FROM_API({ commit }) {
+      apiServices
+        .getRate()
+        .then((rateList) => {
+          commit("SET_RATE_TO_STATE", rateList);
+          console.log(rateList);
+          return rateList;
+        })
+        .catch((error) => {
+          console.log(error);
+          return error;
+        });
+    },
 
     //SELECTED
     GET_SELECTEDCITY({ commit }, chosenItem) {
@@ -160,6 +291,83 @@ export default createStore({
         commit("SET_SELECTEDCAR", chosenItem);
       } else {
         commit("RESET_SELECTEDCAR");
+      }
+    },
+    GET_CHECKEDCOLOR({ commit }, chosenItem) {
+      if (chosenItem) {
+        commit("SET_SELECTEDCOLOR", chosenItem);
+      } else {
+        commit("RESET_SELECTEDCOLOR");
+      }
+    },
+    GET_SELECTEDDATEFROM({ commit }, chosenItem) {
+      if (chosenItem) {
+        commit("SET_SELECTEDDATEFROM", chosenItem);
+      } else {
+        commit("RESET_SELECTEDDATEFROM");
+      }
+    },
+    GET_SELECTEDTIMEFROM({ commit }, chosenItem) {
+      if (chosenItem) {
+        commit("SET_SELECTEDTIMEFROM", chosenItem);
+      } else {
+        commit("RESET_SELECTEDTIMEFROM");
+      }
+    },
+    GET_SELECTEDDATETO({ commit }, chosenItem) {
+      if (chosenItem) {
+        commit("SET_SELECTEDDATETO", chosenItem);
+      } else {
+        commit("RESET_SELECTEDDATETO");
+      }
+    },
+    GET_SELECTEDTIMETO({ commit }, chosenItem) {
+      if (chosenItem) {
+        commit("SET_SELECTEDTIMETO", chosenItem);
+      } else {
+        commit("RESET_SELECTEDTIMETO");
+      }
+    },
+    GET_RENTALDURATION({ commit }, duration) {
+      if (duration) {
+        commit("SET_RENTALDURATION", duration);
+      } else {
+        commit("RESET_RENTALDURATION");
+      }
+    },
+    GET_CHECKEDRATE({ commit }, chosenItem) {
+      if (chosenItem) {
+        commit("SET_SELECTEDRATE", chosenItem);
+      } else {
+        commit("RESET_SELECTEDRATE");
+      }
+    },
+    GET_CHECKEDTANK({ commit }, chosenItem) {
+      if (chosenItem) {
+        commit("SET_SELECTEDTANK", chosenItem);
+      } else {
+        commit("RESET_SELECTEDTANK");
+      }
+    },
+    GET_CHECKEDBABYCHAIR({ commit }, chosenItem) {
+      if (chosenItem) {
+        commit("SET_SELECTEDBABYCHAIR", chosenItem);
+      } else {
+        commit("RESET_SELECTEDBABYCHAIR");
+      }
+    },
+    GET_CHECKEDRIGHTHANDDRIVE({ commit }, chosenItem) {
+      if (chosenItem) {
+        commit("SET_SELECTEDRIGHTHANDDRIVE", chosenItem);
+      } else {
+        commit("RESET_SELECTEDRIGHTHANDDRIVE");
+      }
+    },
+    GET_PRICESUMMARY({ commit }, pricesummary) {
+      if (pricesummary) {
+        commit("SET_PRICESUMMARY", pricesummary);
+      } else {
+        commit("RESET_PRICESUMMARY");
       }
     },
   },

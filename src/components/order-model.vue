@@ -94,6 +94,16 @@ export default {
     const resetSelectedCategoryCar = () => {
       store.dispatch("GET_CHECKEDCATEGORY");
       store.dispatch("GET_SELECTEDCAR");
+      store.dispatch("GET_CHECKEDCOLOR");
+      store.dispatch("GET_SELECTEDDATEFROM");
+      store.dispatch("GET_SELECTEDTIMEFROM");
+      store.dispatch("GET_SELECTEDDATETO");
+      store.dispatch("GET_SELECTEDTIMETO");
+      store.dispatch("GET_RENTALDURATION");
+      store.dispatch("GET_CHECKEDRATE");
+      store.dispatch("GET_CHECKEDTANK");
+      store.dispatch("GET_CHECKEDBABYCHAIR");
+      store.dispatch("GET_CHECKEDRIGHTHANDDRIVE");
       context.emit("on-tab-reset", "order-model");
     };
 

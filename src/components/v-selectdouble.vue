@@ -7,7 +7,9 @@
         :class="{ placeholder: selected === 'Введите дату и время...' }"
       >
         <!--делает видимым/скрытым список с опциями-->
-        <span class="select__text-inside" @click="areOptionsVisible = !areOptionsVisible"
+        <span
+          class="select__text-inside"
+          @click="areOptionsVisible = !areOptionsVisible"
           >{{ selected }} {{ selected2 }}</span
         >
         <span v-if="selected !== 'Введите дату и время...'" @click="resetOption"
@@ -18,7 +20,8 @@
       <div class="select__options" v-if="areOptionsVisible">
         <!--по-умолчанию блок с опциями НЕ виден-->
         <div class="select__options-list">
-          <p class="select__options-item select__text"
+          <p
+            class="select__options-item select__text"
             v-for="option in options"
             :key="option.id"
             @click="selectOption(option)"
@@ -27,8 +30,12 @@
             {{ option.dateString }}
           </p>
         </div>
-        <div class="select__options-list" :class="{ list_blocked: selected === 'Введите дату и время...' }">
-          <p class="select__options-item select__text"
+        <div
+          class="select__options-list"
+          :class="{ list_blocked: selected === 'Введите дату и время...' }"
+        >
+          <p
+            class="select__options-item select__text"
             v-for="option2 in options2"
             :key="option2.id"
             @click="selectOption2(option2)"
@@ -82,23 +89,26 @@ export default {
     const areOptionsVisible = ref(false);
 
     //methods
-    const selectOption = option => {
+    const selectOption = (option) => {
       context.emit("select", option);
-      if(props.selected2 !== '') {
+      if (props.selected2 !== "") {
         areOptionsVisible.value = false;
       }
     };
 
-    const selectOption2 = option2 => {
+    const selectOption2 = (option2) => {
       context.emit("select2", option2);
-      if(props.selected !== 'Введите дату и время...') {
+      if (props.selected !== "Введите дату и время...") {
         areOptionsVisible.value = false;
       }
     };
 
     const resetOption = () => {
       context.emit("reset");
-      if(props.selected !== 'Введите дату и время...' && props.selected2 !== '') {
+      if (
+        props.selected !== "Введите дату и время..." &&
+        props.selected2 !== ""
+      ) {
         areOptionsVisible.value = false;
       }
     };
@@ -108,7 +118,7 @@ export default {
       selectOption,
       selectOption2,
       resetOption,
-    }
+    };
   },
 };
 </script>
@@ -178,7 +188,6 @@ export default {
 .list_blocked {
   pointer-events: none;
   color: $color-grey;
-
 }
 
 .select__options-item {

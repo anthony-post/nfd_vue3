@@ -14,6 +14,7 @@
         label="Пункт выдачи"
         name="point"
         placeholder="Начните вводить пункт ..."
+        :class="{ input_blocked: Object.keys(selectedCity).length === 0 }"
         :itemList="FILTERED_POINTLIST"
         :selectedItem="selectedPoint"
         @on-item-selected="setSelectedPoint"
@@ -173,36 +174,60 @@ export default {
     });
 
     //methods
-    function GET_CITYLIST_FROM_API() {
+    const GET_CITYLIST_FROM_API = () => {
       store.dispatch("GET_CITYLIST_FROM_API");
-    }
+    };
 
-    function GET_POINTLIST_FROM_API() {
+    const GET_POINTLIST_FROM_API = () => {
       store.dispatch("GET_POINTLIST_FROM_API");
-    }
+    };
 
-    function setSelectedCity(chosenItem) {
+    const setSelectedCity = (chosenItem) => {
       store.dispatch("GET_SELECTEDCITY", chosenItem);
-    }
+    };
 
-    function resetSelectedCity() {
+    const resetSelectedCity = () => {
       store.dispatch("GET_SELECTEDCITY");
       store.dispatch("GET_SELECTEDPOINT");
-      context.emit("on-tab-reset", props.idTab); //отправляем событие в компонет v-tab, где будет вызван метод сброса вкладок
-    }
+      store.dispatch("GET_CHECKEDCATEGORY");
+      store.dispatch("GET_SELECTEDCAR");
+      store.dispatch("GET_CHECKEDCOLOR");
+      store.dispatch("GET_SELECTEDDATEFROM");
+      store.dispatch("GET_SELECTEDTIMEFROM");
+      store.dispatch("GET_SELECTEDDATETO");
+      store.dispatch("GET_SELECTEDTIMETO");
+      store.dispatch("GET_RENTALDURATION");
+      store.dispatch("GET_CHECKEDRATE");
+      store.dispatch("GET_CHECKEDTANK");
+      store.dispatch("GET_CHECKEDBABYCHAIR");
+      store.dispatch("GET_CHECKEDRIGHTHANDDRIVE");
+      context.emit("on-tab-reset", props.idTab); //отправляем событие в компонет order-window, где будет вызван метод сброса вкладок
+    };
 
-    function setSelectedPoint(chosenItem) {
+    const setSelectedPoint = (chosenItem) => {
       store.dispatch("GET_SELECTEDPOINT", chosenItem);
-    }
+    };
 
-    function resetSelectedPoint() {
+    const resetSelectedPoint = () => {
       store.dispatch("GET_SELECTEDPOINT");
+      store.dispatch("GET_CHECKEDCATEGORY");
+      store.dispatch("GET_SELECTEDCAR");
+      store.dispatch("GET_CHECKEDCOLOR");
+      store.dispatch("GET_SELECTEDDATEFROM");
+      store.dispatch("GET_SELECTEDTIMEFROM");
+      store.dispatch("GET_SELECTEDDATETO");
+      store.dispatch("GET_SELECTEDTIMETO");
+      store.dispatch("GET_RENTALDURATION");
+      store.dispatch("GET_CHECKEDRATE");
+      store.dispatch("GET_CHECKEDTANK");
+      store.dispatch("GET_CHECKEDBABYCHAIR");
+      store.dispatch("GET_CHECKEDRIGHTHANDDRIVE");
       context.emit("on-tab-reset", props.idTab);
-    }
+    };
 
-    function forceRerenderMap() {
+    const forceRerenderMap = () => {
       componentKey.value += 1;
-    }
+    };
 
     //API
     GET_CITYLIST_FROM_API();
@@ -243,6 +268,11 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+}
+
+.input_blocked {
+  pointer-events: none;
+  opacity: 0.5;
 }
 
 .place__text {
