@@ -15,8 +15,8 @@
         :value="category.id"
       />
     </div>
-    <!-- <Preloader v-if="togglePreloader" /> -->
     <ul class="cars-list">
+      <Preloader v-show="togglePreloader" />
       <li
         class="cars__item"
         v-for="car in filteredCarList"
@@ -42,14 +42,14 @@
 import { useStore } from "vuex";
 import { computed } from "vue";
 import VRadio from "@/components/v-radio.vue";
-// import Preloader from "@/components/v-preloader.vue";
+import Preloader from "@/components/v-preloader.vue";
 import Observer from "@/components/observer.vue";
 
 export default {
   name: "order-model",
   components: {
     VRadio,
-    // Preloader,
+    Preloader,
     Observer,
   },
   setup(_, context) {
@@ -61,31 +61,17 @@ export default {
     const filteredCarList = computed(() =>
       store.getters.FILTERED_CARSDATA_BY_CATEGORY(categoryCars.value)
     );
-    // const carList = computed(() => store.state.carList);
     const checkedCategoryCars = computed(
       () => store.state.checkedCategoryCars || "no-filter"
     );
     const selectedCar = computed(() => store.state.selectedCar);
 
-    // const togglePreloader = computed(() => {
-    //   if (carList.value.length > 0) {
-    //     return false;
-    //   }
-    //   return true;
-    // });
-
-    //рабочий фильтр списка авто по категориям (без запроса по API)
-    // const filteredCars = computed(() => {
-    //   if (!checkedCategoryCars.value) {
-    //     return carList.value;
-    //   } else {
-    //     return carList.value.filter((car) => {
-    //       if (car?.categoryId?.id) {
-    //         return car.categoryId.id.includes(checkedCategoryCars.value);
-    //       }
-    //     });
-    //   }
-    // });
+    const togglePreloader = computed(() => {
+      if (filteredCarList.value?.length === 0) {
+        return true;
+      }
+      return false;
+    });
 
     const categoryCars = computed({
       get: () => {
@@ -101,8 +87,6 @@ export default {
       store.dispatch("GET_CATEGORYLIST_FROM_API");
     const GET_FILTEREDCARLIST_FROM_API = (chosenCategoryCar) =>
       store.dispatch("GET_FILTEREDCARLIST_FROM_API", chosenCategoryCar);
-
-    // const GET_CARLIST_FROM_API = () => store.dispatch("GET_CARLIST_FROM_API");
 
     const setSelectedCar = (chosenCar) =>
       store.dispatch("GET_SELECTEDCAR", chosenCar);
@@ -121,9 +105,6 @@ export default {
 
     getData();
 
-    // GET_CATEGORYLIST_FROM_API();
-    // GET_CARLIST_FROM_API();
-
     //intersection observer
     const intersected = async () => {
       await GET_FILTEREDCARLIST_FROM_API(categoryCars.value);
@@ -133,11 +114,9 @@ export default {
       categoryList,
       filteredCarList,
       intersected,
-      // carList,
       checkedCategoryCars,
       selectedCar,
-      // togglePreloader,
-      // filteredCars,
+      togglePreloader,
       categoryCars,
       setSelectedCar,
       resetSelectedCategoryCar,

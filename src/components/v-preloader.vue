@@ -30,7 +30,8 @@ export default {
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  height: calc(100vh - 274px);
+  height: 100%;
+  width: 100%;
 
   @media #{$media} and (min-width: $mobile-min) and (max-width: $mobile-max) {
     height: 40vh;
