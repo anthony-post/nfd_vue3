@@ -88,6 +88,7 @@
     <button
       class="total__button total__button_active"
       v-if="selectedTab === 'order-summary'"
+      @click="showPopUp"
     >
       Заказать
     </button>
@@ -371,6 +372,12 @@ export default {
       return priceCalculated;
     };
 
+    const showPopUp = () => {
+        const popUpIsActive = true;
+        store.dispatch("GET_POPUPCONFIRM", popUpIsActive);
+        store.dispatch("POST_ORDER_TO_API");
+    };
+
     return {
       selectedCity,
       selectedPoint,
@@ -393,6 +400,7 @@ export default {
       changeSelectedTabAdditional,
       changeSelectedTabSummary,
       calcAddService,
+      showPopUp,
     };
   },
 };
