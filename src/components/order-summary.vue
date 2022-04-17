@@ -16,7 +16,9 @@
       </p>
       <p class="summary__additional">
         Доступна с
-        <span class="summary__selected-value">{{ selectedDateFrom }} {{ selectedTimeFrom }}</span>
+        <span class="summary__selected-value"
+          >{{ selectedDateFrom }} {{ selectedTimeFrom }}</span
+        >
       </p>
     </div>
     <img
@@ -49,7 +51,9 @@ export default {
     const selectedRate = computed(() => store.state.selectedRate);
     const selectedTank = computed(() => store.state.selectedTank);
     const selectedBabyChair = computed(() => store.state.selectedBabyChair);
-    const selectedRightHandDrive = computed(() => store.state.selectedRightHandDrive);
+    const selectedRightHandDrive = computed(
+      () => store.state.selectedRightHandDrive
+    );
     const popUpConfirm = computed(() => store.state.popUpConfirm);
 
     return {
@@ -62,7 +66,7 @@ export default {
       selectedBabyChair,
       selectedRightHandDrive,
       popUpConfirm,
-    }
+    };
   },
 };
 </script>

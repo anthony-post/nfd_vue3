@@ -373,9 +373,9 @@ export default {
     };
 
     const showPopUp = () => {
-        const popUpIsActive = true;
-        store.dispatch("GET_POPUPCONFIRM", popUpIsActive);
-        store.dispatch("POST_ORDER_TO_API");
+      const popUpIsActive = true;
+      store.dispatch("GET_POPUPCONFIRM", popUpIsActive);
+      store.dispatch("POST_ORDER_TO_API");
     };
 
     return {

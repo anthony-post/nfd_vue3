@@ -333,11 +333,10 @@ export default createStore({
         data: {
           orderStatusId: this.state.orderConfirmedStatusId,
         },
-      })
-        .catch((error) => {
-          console.log(error);
-          return error;
-        });
+      }).catch((error) => {
+        console.log(error);
+        return error;
+      });
     },
     GET_ORDER_FROM_API({ commit }) {
       const mainUrl = "https://api-factory.simbirsoft1.com/api/db/order/";
@@ -369,11 +368,10 @@ export default createStore({
         data: {
           orderStatusId: this.state.orderCanceledStatusId,
         },
-      })
-        .catch((error) => {
-          console.log(error);
-          return error;
-        });
+      }).catch((error) => {
+        console.log(error);
+        return error;
+      });
     },
 
     //SELECTED

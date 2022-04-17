@@ -3,23 +3,21 @@
     <div class="modal-mask">
       <div class="modal-wrapper">
         <div class="modal-container">
-          <div class="modal-body">
-          Подтвердить заказ
-          </div>
+          <div class="modal-body">Подтвердить заказ</div>
           <div class="modal-footer">
-              <router-link
-                v-if="orderId"
-                :to="{ name: 'v-orderid', params: { id: orderId } }"
-                ><button class="modal-button" @click="confirmOrder">
-                  Подтвердить
-                </button>
-              </router-link>
-              <button
-                class="modal-button modal-button_colored"
-                @click="closePopUp"
-              >
-                Вернуться
+            <router-link
+              v-if="orderId"
+              :to="{ name: 'v-orderid', params: { id: orderId } }"
+              ><button class="modal-button" @click="confirmOrder">
+                Подтвердить
               </button>
+            </router-link>
+            <button
+              class="modal-button modal-button_colored"
+              @click="closePopUp"
+            >
+              Вернуться
+            </button>
           </div>
         </div>
       </div>
@@ -53,7 +51,7 @@ export default {
       orderId,
       confirmOrder,
       closePopUp,
-    }
+    };
   },
 };
 </script>
