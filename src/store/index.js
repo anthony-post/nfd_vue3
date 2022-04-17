@@ -47,27 +47,25 @@ export default createStore({
         };
       });
     },
-    // SET_CATEGORYLIST_TO_STATE: (state, categoryList) => {
-    //   state.categoryList = categoryList.data.data;
-    // },
 
     //авто
     SET_CARS_DATA: (state, { carsData, categoryId }) => {
       if (!categoryId) {
         const carsAllCategory = state.cars["no-filter"];
-
         carsAllCategory.value.push(...carsData.data.data);
-        carsAllCategory.page++;
+
+        if(carsAllCategory.value.length <= carsData.data.count) {
+          carsAllCategory.page++;
+        }
       } else {
         const carsByCategory = state.cars[categoryId];
-
         carsByCategory.value.push(...carsData.data.data);
-        carsByCategory.page++;
+
+        if(carsByCategory.value.length <= carsData.data.count) {
+          carsByCategory.page++;
+        }
       }
     },
-    // SET_CARLIST_TO_STATE: (state, carList) => {
-    //   state.carList = carList.data.data;
-    // },
 
     //CITY
     SET_SELECTEDCITY(state, selectedCity) {
@@ -124,35 +122,10 @@ export default createStore({
           return error;
         });
     },
-    // GET_CATEGORYLIST_FROM_API({ commit }) {
-    //   apiServices
-    //     .getCategory()
-
-    //     .then((categoryList) => {
-    //       commit("SET_CATEGORYLIST_TO_STATE", categoryList);
-    //       return categoryList;
-    //     })
-    //     .catch((error) => {
-    //       console.log(error);
-    //       return error;
-    //     });
-    // },
     async GET_CATEGORYLIST_FROM_API({ commit }) {
       const categories = await apiServices.getCategories();
       commit("SET_CATEGORYLIST_TO_STATE", categories.data.data);
     },
-    // GET_CARLIST_FROM_API({ commit }) {
-    //   apiServices
-    //     .getCars()
-    //     .then((carList) => {
-    //       commit("SET_CARLIST_TO_STATE", carList);
-    //       return carList;
-    //     })
-    //     .catch((error) => {
-    //       console.log(error);
-    //       return error;
-    //     });
-    // },
     async GET_FILTEREDCARLIST_FROM_API({ commit, state }, categoryId) {
       if (categoryId === "no-filter") {
         const page = state.cars["no-filter"]?.page;
