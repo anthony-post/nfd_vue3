@@ -10,7 +10,8 @@
               <router-link
                 v-if="orderId"
                 :to="{ name: 'v-orderid', params: { id: orderId } }"
-                ><button class="modal-button" @click="confirmOrder">
+              >
+                <button class="modal-button" @click="confirmOrder">
                   Подтвердить
                 </button>
               </router-link>
@@ -34,7 +35,6 @@ import { computed } from "vue";
 export default {
   name: "popup",
   setup() {
-    //const
     const store = useStore();
 
     //computed
