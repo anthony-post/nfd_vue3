@@ -1,5 +1,5 @@
 <template>
-  <label class="radio-item">
+  <label class="radio-item" :class="{ item_active: isChecked }">
     {{ label }}
     <input
       class="radio__input"
@@ -65,6 +65,10 @@ export default {
   margin-right: 10px;
 }
 
+.item_active {
+  color: $color-black;
+}
+
 /* Hide the browser's default radio button */
 .radio__input {
   position: absolute;
@@ -77,7 +81,7 @@ export default {
 /* Create a custom radio button */
 .checkmark {
   position: absolute;
-  top: 0;
+  top: 1.5px;
   left: 0;
   height: 12px;
   width: 12px;

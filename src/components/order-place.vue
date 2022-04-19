@@ -14,8 +14,8 @@
         label="Пункт выдачи"
         name="point"
         placeholder="Начните вводить пункт ..."
-        :class="{ input_blocked: Object.keys(selectedCity).length === 0 }"
-        :itemList="FILTERED_POINTLIST"
+        :class="{ input_blocked: isSelectedCity }"
+        :itemList="filteredPointList"
         :selectedItem="selectedPoint"
         @on-item-selected="setSelectedPoint"
         @on-item-reset="resetSelectedPoint"
@@ -140,7 +140,7 @@ export default {
     const componentKey = ref(0);
 
     //computed
-    const FILTERED_POINTLIST = computed(() => store.getters.FILTERED_POINTLIST);
+    const filteredPointList = computed(() => store.getters.FILTERED_POINTLIST);
     const cityList = computed(() => store.state.cityList);
     const selectedCity = computed(() => store.state.selectedCity);
     const selectedPoint = computed(() => store.state.selectedPoint);
@@ -164,21 +164,25 @@ export default {
 
     //добавление координат пунктов выдачи в отфильтрованный массив с объектами пунктов выдачи
     const newPointListWithCoordsArr = computed(() => {
-      return FILTERED_POINTLIST.value.map((item) => {
+      return filteredPointList.value.map((item) => {
         const foundPoint = pointListCoords.find(
-          (point) => point.id === item.id
+          point => point.id === item.id
         );
 
         return foundPoint ? { ...item, coordsPoint: foundPoint.coords } : item;
       });
     });
 
+    const isSelectedCity = computed(() => {
+      return Object.keys(selectedCity.value).length === 0
+    });
+
     //methods
-    const GET_CITYLIST_FROM_API = () => {
+    const getCityListFromApi = () => {
       store.dispatch("GET_CITYLIST_FROM_API");
     };
 
-    const GET_POINTLIST_FROM_API = () => {
+    const getPointListFromApi = () => {
       store.dispatch("GET_POINTLIST_FROM_API");
     };
 
@@ -230,8 +234,8 @@ export default {
     };
 
     //API
-    GET_CITYLIST_FROM_API();
-    GET_POINTLIST_FROM_API();
+    getCityListFromApi();
+    getPointListFromApi();
 
     //ререндеринг компонента карты если выбран/сброшен город или пункт выдачи
     watch([selectedCity, selectedPoint], () => {
@@ -245,15 +249,16 @@ export default {
       cityList,
       selectedCity,
       selectedPoint,
-      FILTERED_POINTLIST,
+      filteredPointList,
       chosenCityObj,
       newPointListWithCoordsArr,
+      isSelectedCity,
       setSelectedCity,
       resetSelectedCity,
       setSelectedPoint,
       resetSelectedPoint,
-      GET_CITYLIST_FROM_API,
-      GET_POINTLIST_FROM_API,
+      getCityListFromApi,
+      getPointListFromApi,
       forceRerenderMap,
     };
   },

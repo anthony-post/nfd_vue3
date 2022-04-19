@@ -19,27 +19,27 @@
     <div class="additional-input__wrp">
       <p>
         <VSelectDouble
-          :options="arrayDate"
-          :options2="arrayTime"
-          @select="setSelectedDateFrom"
-          @select2="setSelectedTimeFrom"
+          :optionsDate="arrayDate"
+          :optionsTime="arrayTime"
+          @selectDate="setSelectedDateFrom"
+          @selectTime="setSelectedTimeFrom"
           @reset="resetSelectedFrom"
-          :selected="selectedDateFrom"
-          :selected2="selectedTimeFrom"
+          :selectedDate="selectedDateFrom"
+          :selectedTime="selectedTimeFrom"
           pretext="C"
         />
       </p>
       <p>
         <!--альтернативный вариант выбора даты и время-->
         <VSelectDouble
-          :class="{ select_blocked: !dateStateFrom }"
-          :options="arrayDate"
-          :options2="arrayTime"
-          @select="setSelectedDateTo"
-          @select2="setSelectedTimeTo"
+          :class="{ select_blocked: isSelectedDateFrom }"
+          :optionsDate="arrayDate"
+          :optionsTime="arrayTime"
+          @selectDate="setSelectedDateTo"
+          @selectTime="setSelectedTimeTo"
           @reset="resetSelectedTo"
-          :selected="selectedDateTo"
-          :selected2="selectedTimeTo"
+          :selectedDate="selectedDateTo"
+          :selectedTime="selectedTimeTo"
           pretext="По"
         />
       </p>
@@ -47,7 +47,7 @@
     <p class="additional__text">Тариф</p>
     <div
       class="tarif-wrp"
-      :class="{ select_blocked: !dateStateFrom || !dateStateTo }"
+      :class="{ select_blocked: isSelectedDateFromTo }"
     >
       <VRadio
         v-model:checkedValue="checkedRate"
@@ -67,7 +67,7 @@
     <div
       class="services-wrp"
       :class="{
-        select_blocked: !dateStateFrom || !dateStateTo || !selectedRate,
+        select_blocked: isSelectedDateRate,
       }"
     >
       <VCheckbox v-model="checkedTank" label="Полный бак, 500р" value="Да" />
@@ -169,9 +169,19 @@ export default {
       },
     });
 
+    const isSelectedDateFrom = computed(() => {
+      return (!dateStateFrom.value);
+    });
+    const isSelectedDateFromTo = computed(() => {
+      return (!dateStateFrom.value || !dateStateTo.value);
+    });
+    const isSelectedDateRate = computed(() => {
+      return (!dateStateFrom.value || !dateStateTo.value || !selectedRate.value);
+    });
+
     //methods
     //получение списка тарифов по API
-    const GET_RATE_FROM_API = () => store.dispatch("GET_RATE_FROM_API");
+    const getRateFromApi = () => store.dispatch("GET_RATE_FROM_API");
 
     //сброс выбранного цвета авто
     const resetSelectedColor = () => {
@@ -357,7 +367,7 @@ export default {
     });
 
     //получение списка доступных тарифов
-    GET_RATE_FROM_API();
+    getRateFromApi();
 
     return {
       arrayDateFrom,
@@ -381,7 +391,10 @@ export default {
       checkedTank,
       checkedBabyChair,
       checkedRightHandDrive,
-      GET_RATE_FROM_API,
+      isSelectedDateFrom,
+      isSelectedDateFromTo,
+      isSelectedDateRate,
+      getRateFromApi,
       resetSelectedColor,
       setSelectedDateFrom,
       resetSelectedDateFrom,
