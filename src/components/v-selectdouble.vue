@@ -1,7 +1,7 @@
 <template>
   <div class="select">
     <div class="select__text pretext">{{ pretext }}</div>
-    <div>
+    <div class="select-block">
       <p
         class="select__title select__text"
         :class="{ placeholder: selectedDate === 'Введите дату и время...' }"
@@ -131,12 +131,15 @@ export default {
   display: flex;
 }
 
+.select-block {
+  width: 224px;
+}
+
 .select__title {
   margin: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 224px;
   border: none;
   border-bottom: 1px solid $color-grey;
 }
@@ -169,7 +172,6 @@ export default {
   top: 20px;
   left: 20px;
   right: 0;
-  width: 100%;
   background: $color-white;
   text-align: center;
   z-index: 1;

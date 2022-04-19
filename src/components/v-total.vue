@@ -26,10 +26,8 @@
           {{ rentalDuration.hours }}ч
         </span>
       </li>
-      <!-- <li class="total__item" v-if="getNameRate.length"> -->
       <li class="total__item" v-if="getNameRate">
         <span class="total__item-title">Тариф</span>
-        <!-- <span class="total__item-value">{{ getNameRate.rateTypeId.name }}</span> -->
         <span class="total__item-value">{{ getNameRate }}</span>
       </li>
       <li class="total__item" v-if="selectedTank">
