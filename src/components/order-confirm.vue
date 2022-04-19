@@ -56,12 +56,8 @@
             <li>
               <span class="item__title">Пункт выдачи</span>
               <div class="item__value">
-                <span v-if="orderConfirmed?.cityId">{{
-                  orderConfirmed.cityId.name
-                }}</span>
-                <span v-if="orderConfirmed?.pointId">{{
-                  orderConfirmed.pointId.name
-                }}</span>
+                <span v-if="orderConfirmed?.cityId">{{ orderConfirmed.cityId.name }}</span>
+                <span v-if="orderConfirmed?.pointId">{{ orderConfirmed.pointId.name }}</span>
               </div>
             </li>
             <li v-if="orderConfirmed?.carId">
@@ -74,17 +70,12 @@
             </li>
             <li v-if="rentalDuration">
               <span class="item__title">Длительность аренд</span>
-              <span class="item__value" v-if="rentalDuration.days"
-                >{{ rentalDuration.days }}д</span
-              ><span class="item__value" v-if="rentalDuration.hours"
-                >{{ rentalDuration.hours }}ч</span
-              >
+              <span class="item__value" v-if="rentalDuration.days">{{ rentalDuration.days }}д</span>
+              <span class="item__value" v-if="rentalDuration.hours">{{ rentalDuration.hours }}ч</span>
             </li>
             <li v-if="orderConfirmed?.rateId">
               <span class="item__title">Тариф</span>
-              <span class="item__value">{{
-                orderConfirmed.rateId.rateTypeId.name
-              }}</span>
+              <span class="item__value">{{ orderConfirmed.rateId.rateTypeId.name }}</span>
             </li>
             <li v-if="orderConfirmed?.isFullTank">
               <span class="item__title">Полный бак</span>
@@ -102,19 +93,17 @@
           <!--Цена-->
           <p class="total__price">
             Цена:
-            <span class="total__price total__price-thin"
-              >{{ orderConfirmed.price }} &#8381;</span
-            >
+            <span class="total__price total__price-thin">{{ orderConfirmed.price }} &#8381;</span>
           </p>
           <!--Кнопка Отменить-->
-          <router-link :to="{ name: 'v-order' }"
-            ><button
+          <router-link :to="{ name: 'v-order' }">
+            <button
               class="total__button total__button_active button-colored"
               @click="cancelOrder"
             >
               Отменить
-            </button></router-link
-          >
+            </button>
+          </router-link>
         </div>
       </div>
     </div>
@@ -132,7 +121,6 @@ export default {
     Vheader,
   },
   setup() {
-    //const
     const store = useStore();
 
     //computed
@@ -141,8 +129,8 @@ export default {
     const orderConfirmed = computed(() => store.state.orderConfirmed);
     //конвертирование даты из мс в строку
     const convertToDate = computed(() => {
-      let mlsDate = orderConfirmed.value.dateFrom;
-      let dateObj = new Date(mlsDate);
+      const mlsDate = orderConfirmed.value.dateFrom;
+      const dateObj = new Date(mlsDate);
 
       let dd = dateObj.getDate();
       if (dd < 10) dd = "0" + dd;
@@ -243,7 +231,7 @@ export default {
   font-weight: bold;
   font-size: 14px;
   line-height: 16px;
-  color: $color-title;
+  color: $color-black;
   padding: 8px 0;
 }
 
@@ -252,7 +240,7 @@ export default {
 }
 
 .tab__item_active {
-  color: $color-text;
+  color: $color-black;
 }
 
 .order {
@@ -289,7 +277,7 @@ export default {
   font-weight: normal;
   font-size: 24px;
   line-height: 28px;
-  color: $color-title;
+  color: $color-black;
   margin: 0;
 }
 
@@ -305,7 +293,7 @@ export default {
   font-weight: normal;
   font-size: 24px;
   line-height: 28px;
-  color: $color-title;
+  color: $color-black;
 }
 
 .summary__car-name {
@@ -314,11 +302,11 @@ export default {
   font-weight: normal;
   font-size: 18px;
   line-height: 21px;
-  color: $color;
+  color: $color-black;
 }
 
 .car-number__wrp {
-  border: 1px solid #999999;
+  border: 1px solid $color-grey;
   box-sizing: border-box;
   border-radius: 4px;
   padding: 5px;
@@ -332,7 +320,7 @@ export default {
   font-weight: normal;
   font-size: 14px;
   line-height: 16px;
-  color: $color;
+  color: $color-black;
   margin: 0;
 }
 
@@ -342,7 +330,7 @@ export default {
   font-weight: bold;
   font-size: 14px;
   line-height: 16px;
-  color: $color;
+  color: $color-black;
 }
 
 .summary__selected-value {
@@ -382,7 +370,7 @@ export default {
   font-size: 18px;
   line-height: 21px;
   text-align: right;
-  color: $color-title;
+  color: $color-black;
   margin-top: 0;
 
   @media #{$media} and (min-width: $mobile-min) and (max-width: $mobile-max) {
@@ -419,7 +407,7 @@ export default {
   font-weight: 300;
   font-size: 14px;
   line-height: 16px;
-  color: $color-title;
+  color: $color-black;
   margin: 0;
 }
 
@@ -457,7 +445,7 @@ export default {
   font-weight: 300;
   font-size: 14px;
   line-height: 16px;
-  color: $color-title;
+  color: $color-black;
 }
 
 .total__price {
@@ -466,7 +454,7 @@ export default {
   font-weight: 500;
   font-size: 16px;
   line-height: 16px;
-  color: $color-title;
+  color: $color-black;
 
   @media #{$media} and (min-width: $mobile-min) and (max-width: $mobile-max) {
     padding: 0 16px;
@@ -497,7 +485,7 @@ export default {
 }
 
 .total__button_active {
-  background: $color-text;
+  background: $color-black;
   cursor: pointer;
 }
 
