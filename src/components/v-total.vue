@@ -165,7 +165,7 @@ export default {
           selectedRate.value === rate.id &&
           selectedRate.value === rateMonthId
         ) {
-          let rateMonthPrice = rate.price / (30 * 86400000);
+          const rateMonthPrice = rate.price / (30 * 86400000);
           if (duration === 30 * 86400000) {
             priceCalculated = Math.round(duration * rateMonthPrice);
           } else {
@@ -186,7 +186,7 @@ export default {
           selectedRate.value === rate.id &&
           selectedRate.value === rateMinuteId
         ) {
-          let rateMinutePrice = rate.price / 60000;
+          const rateMinutePrice = rate.price / 60000;
           if (duration > 60000 && duration < 1 * 86400000) {
             priceCalculated = Math.round(duration * rateMinutePrice);
           } else {
@@ -207,7 +207,7 @@ export default {
           selectedRate.value === rate.id &&
           selectedRate.value === rateDayId
         ) {
-          let rateDayPrice = rate.price / 86400000;
+          const rateDayPrice = rate.price / 86400000;
           if (duration >= 86400000 && duration < 7 * 86400000) {
             priceCalculated = Math.round(duration * rateDayPrice);
           } else {
@@ -228,7 +228,7 @@ export default {
           selectedRate.value === rate.id &&
           selectedRate.value === rateWeekId
         ) {
-          let rateWeekPrice = rate.price / (7 * 86400000);
+          const rateWeekPrice = rate.price / (7 * 86400000);
           if (duration === 7 * 86400000) {
             priceCalculated = Math.round(duration * rateWeekPrice);
           } else {
@@ -249,7 +249,7 @@ export default {
           selectedRate.value === rate.id &&
           selectedRate.value === rateWeekSaleId
         ) {
-          let rateWeekSalePrice = rate.price / (7 * 86400000);
+          const rateWeekSalePrice = rate.price / (7 * 86400000);
           if (duration === 7 * 86400000) {
             priceCalculated = Math.round(duration * rateWeekSalePrice);
           } else {
@@ -270,7 +270,7 @@ export default {
           selectedRate.value === rate.id &&
           selectedRate.value === rateQuarterId
         ) {
-          let rateQuarterPrice = rate.price / (90 * 86400000);
+          const rateQuarterPrice = rate.price / (90 * 86400000);
           if (duration === 90 * 86400000) {
             priceCalculated = Math.round(duration * rateQuarterPrice);
           } else {
@@ -291,7 +291,7 @@ export default {
           selectedRate.value === rate.id &&
           selectedRate.value === rateYearId
         ) {
-          let rateYearPrice = rate.price / (365 * 86400000);
+          const rateYearPrice = rate.price / (365 * 86400000);
           if (duration === 365 * 86400000) {
             priceCalculated = Math.round(duration * rateYearPrice);
           } else {
@@ -313,27 +313,18 @@ export default {
     });
 
     const orderPlaceFilledUp = computed(() => {
-      if (
+      return (
         Object.keys(selectedCity.value).length &&
         Object.keys(selectedPoint.value).length !== 0
-      ) {
-        return true;
-      }
-      return false;
+      )
     });
 
     const orderModelFilledUp = computed(() => {
-      if (Object.keys(selectedCar.value).length !== 0) {
-        return true;
-      }
-      return false;
+      return Object.keys(selectedCar.value).length !== 0
     });
 
     const orderAdditionalFilledUp = computed(() => {
-      if (dateStateFrom.value && dateStateTo.value && selectedRate.value) {
-        return true;
-      }
-      return false;
+      return (dateStateFrom.value && dateStateTo.value && selectedRate.value)
     });
 
     //methods
