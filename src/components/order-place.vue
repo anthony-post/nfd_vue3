@@ -42,7 +42,6 @@ export default {
   },
   props: ["idTab"],
   setup(props, context) {
-    //const
     const store = useStore();
     //массив городов с координатами
     const cityListCoords = [
@@ -148,7 +147,7 @@ export default {
     //выбранный объект города c координатми города и его пунктов выдачи
     const chosenCityObj = computed(() => {
       let newObjCity = {};
-      for (var i = 0; i < cityListCoords.length; i++) {
+      for (let i = 0; i < cityListCoords.length; i++) {
         if (selectedCity.value.id === cityListCoords[i].id) {
           //в выбранный объект города добавляются его координаты
           //добавление  нового свойства (массив с пунктами выдачи и их координатами) в объект

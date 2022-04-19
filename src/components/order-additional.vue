@@ -99,7 +99,7 @@ export default {
     VSelectDouble,
     VCheckbox,
   },
-  setup(props, context) {
+  setup(_, context) {
     const store = useStore();
 
     //ref
@@ -251,15 +251,15 @@ export default {
 
     //форматирование даты
     const formatedDate = (dateObj) => {
-      let date =
+      const date =
         dateObj.getDate().toString().length < 2
           ? "0" + dateObj.getDate()
           : dateObj.getDate();
-      let month =
+      const month =
         dateObj.getMonth().toString().length < 2
           ? "0" + (dateObj.getMonth() + 1)
           : dateObj.getMonth() + 1;
-      let year = dateObj.getFullYear().toString();
+      const year = dateObj.getFullYear().toString();
 
       return `${date}.${month}.${year}`;
     };

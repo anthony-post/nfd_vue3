@@ -314,27 +314,18 @@ export default {
     });
 
     const orderPlaceFilledUp = computed(() => {
-      if (
+      return (
         Object.keys(selectedCity.value).length &&
         Object.keys(selectedPoint.value).length !== 0
-      ) {
-        return true;
-      }
-      return false;
+      )
     });
 
     const orderModelFilledUp = computed(() => {
-      if (Object.keys(selectedCar.value).length !== 0) {
-        return true;
-      }
-      return false;
+      return Object.keys(selectedCar.value).length !== 0
     });
 
     const orderAdditionalFilledUp = computed(() => {
-      if (dateStateFrom.value && dateStateTo.value && selectedRate.value) {
-        return true;
-      }
-      return false;
+      return (dateStateFrom.value && dateStateTo.value && selectedRate.value)
     });
 
     //methods

@@ -53,7 +53,6 @@ export default {
     Observer,
   },
   setup(_, context) {
-    //const
     const store = useStore();
 
     //computed
@@ -107,7 +106,6 @@ export default {
     //API
     const getData = async () => {
       await getGategoryListFromApi();
-      // await getFilteredCarListFromApi(categoryCars.value);
     };
 
     getData();
