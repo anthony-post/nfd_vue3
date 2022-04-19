@@ -46,13 +46,12 @@
     <!--Цена-->
     <p class="total__price" v-if="selectedCar.name">
       Цена:
-      <span class="total__price total__price-thin" v-if="getPriceSummary"
-        >{{ getPriceSummary }} &#8381;</span
-      >
-      <span class="total__price total__price-thin" v-else
-        >от {{ selectedCar.priceMin }} до
-        {{ selectedCar.priceMax }} &#8381;</span
-      >
+      <span class="total__price total__price-thin" v-if="getPriceSummary">
+        {{ getPriceSummary }} &#8381;
+      </span>
+      <span class="total__price total__price-thin" v-else>
+        от {{ selectedCar.priceMin }} до {{ selectedCar.priceMax }} &#8381;
+      </span>
     </p>
     <!--Кнопка Выбрать модель-->
     <button
@@ -136,13 +135,13 @@ export default {
     //поиск выбранного id тарифа в массиве и получение его наименования
     const getNameRate = computed(() => {
       let nameRate = "";
-      for (let i = 0; i < rateList.value.length; i++) {
-        if (rateList.value[i].id === selectedRate.value) {
-          nameRate = rateList.value[i].rateTypeId.name;
-        }
-      }
+      rateList.value.filter(item => {
+         if(item.id === selectedRate.value) {
+           nameRate = item.rateTypeId.name;
+         } 
+      });
       return nameRate;
-    });
+    }, '');
 
     //подсчет итоговой суммы заказа
     const getPriceSummary = computed(() => {
@@ -158,7 +157,7 @@ export default {
       const priceRightHandDrive = 1600;
 
       let priceCalculated;
-      let duration = dateStateTo.value - dateStateFrom.value;
+      const duration = dateStateTo.value - dateStateFrom.value;
 
       rateList.value.forEach((rate) => {
         //monthly rate

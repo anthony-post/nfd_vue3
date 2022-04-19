@@ -35,9 +35,9 @@ export default {
 
     //methods
     const updateInput = (event) => {
-      let isChecked = event.target.checked;
+      const isChecked = event.target.checked;
       if (props.modelValue instanceof Array) {
-        let newValue = [...props.modelValue];
+        const newValue = [...props.modelValue];
         if (isChecked) {
           newValue.push(props.value);
         } else {
@@ -125,7 +125,7 @@ export default {
   top: -3px;
   width: 5px;
   height: 10px;
-  border: solid #121212;
+  border: solid $color-black;
   border-width: 0 3px 3px 0;
   -webkit-transform: rotate(45deg);
   -ms-transform: rotate(45deg);

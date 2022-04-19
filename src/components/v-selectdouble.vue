@@ -1,20 +1,20 @@
 <template>
   <div class="select">
     <div class="select__text pretext">{{ pretext }}</div>
-    <div>
+    <div class="select-block">
       <p
         class="select__title select__text"
-        :class="{ placeholder: selected === 'Введите дату и время...' }"
+        :class="{ placeholder: selectedDate === 'Введите дату и время...' }"
       >
         <!--делает видимым/скрытым список с опциями-->
         <span
           class="select__text-inside"
           @click="areOptionsVisible = !areOptionsVisible"
-          >{{ selected }} {{ selected2 }}</span
-        >
-        <span v-if="selected !== 'Введите дату и время...'" @click="resetOption"
-          ><vicon icon-id="icon-cross" width="8" height="8"
-        /></span>
+        >{{ selectedDate }} {{ selectedTime }}
+        </span>
+        <span v-if="selectedDate !== 'Введите дату и время...'" @click="resetOption">
+          <vicon icon-id="icon-cross" width="8" height="8"/>
+        </span>
       </p>
       <!--Option list-->
       <div class="select__options" v-if="areOptionsVisible">
@@ -22,9 +22,9 @@
         <div class="select__options-list">
           <p
             class="select__options-item select__text"
-            v-for="option in options"
+            v-for="option in optionsDate"
             :key="option.id"
-            @click="selectOption(option)"
+            @click="selectDate(option)"
           >
             <!--обработчик клика по опции из списка-->
             {{ option.dateString }}
@@ -32,16 +32,16 @@
         </div>
         <div
           class="select__options-list"
-          :class="{ list_blocked: selected === 'Введите дату и время...' }"
+          :class="{ list_blocked: selectedDate === 'Введите дату и время...' }"
         >
           <p
             class="select__options-item select__text"
-            v-for="option2 in options2"
-            :key="option2.id"
-            @click="selectOption2(option2)"
+            v-for="option in optionsTime"
+            :key="option.id"
+            @click="selectTime(option)"
           >
             <!--обработчик клика по опции из списка-->
-            {{ option2.dateString }}
+            {{ option.dateString }}
           </p>
         </div>
       </div>
@@ -54,28 +54,28 @@ import { ref } from "vue";
 import Vicon from "@/components/v-icon.vue";
 
 export default {
-  name: "v-select",
+  name: "v-selectdouble",
   components: {
     Vicon,
   },
   props: {
-    options: {
+    optionsDate: {
       type: Array,
       default() {
         return [];
       },
     },
-    options2: {
+    optionsTime: {
       type: Array,
       default() {
         return [];
       },
     },
-    selected: {
+    selectedDate: {
       type: String,
       default: "",
     },
-    selected2: {
+    selectedTime: {
       type: String,
       default: "",
     },
@@ -89,16 +89,16 @@ export default {
     const areOptionsVisible = ref(false);
 
     //methods
-    const selectOption = (option) => {
-      context.emit("select", option);
-      if (props.selected2 !== "") {
+    const selectDate = option => {
+      context.emit("selectDate", option);
+      if (props.selectedTime !== "") {
         areOptionsVisible.value = false;
       }
     };
 
-    const selectOption2 = (option2) => {
-      context.emit("select2", option2);
-      if (props.selected !== "Введите дату и время...") {
+    const selectTime = option => {
+      context.emit("selectTime", option);
+      if (props.selectedDate !== "Введите дату и время...") {
         areOptionsVisible.value = false;
       }
     };
@@ -106,8 +106,8 @@ export default {
     const resetOption = () => {
       context.emit("reset");
       if (
-        props.selected !== "Введите дату и время..." &&
-        props.selected2 !== ""
+        props.selectedDate !== "Введите дату и время..." &&
+        props.selectedTime !== ""
       ) {
         areOptionsVisible.value = false;
       }
@@ -115,8 +115,8 @@ export default {
 
     return {
       areOptionsVisible,
-      selectOption,
-      selectOption2,
+      selectDate,
+      selectTime,
       resetOption,
     };
   },
@@ -131,12 +131,15 @@ export default {
   display: flex;
 }
 
+.select-block {
+  width: 224px;
+}
+
 .select__title {
   margin: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 224px;
   border: none;
   border-bottom: 1px solid $color-grey;
 }
@@ -169,7 +172,6 @@ export default {
   top: 20px;
   left: 20px;
   right: 0;
-  width: 100%;
   background: $color-white;
   text-align: center;
   z-index: 1;
