@@ -67,10 +67,7 @@ export default {
     const selectedCar = computed(() => store.state.selectedCar);
 
     const togglePreloader = computed(() => {
-      if (filteredCarList.value?.length === 0) {
-        return true;
-      }
-      return false;
+      return filteredCarList.value?.length === 0
     });
 
     const categoryCars = computed({
@@ -83,9 +80,9 @@ export default {
     });
 
     //methods
-    const GET_CATEGORYLIST_FROM_API = () =>
+    const getGategoryListFromApi = () =>
       store.dispatch("GET_CATEGORYLIST_FROM_API");
-    const GET_FILTEREDCARLIST_FROM_API = (chosenCategoryCar) =>
+    const getFilteredCarListFromApi = (chosenCategoryCar) =>
       store.dispatch("GET_FILTEREDCARLIST_FROM_API", chosenCategoryCar);
 
     const setSelectedCar = (chosenCar) =>
@@ -109,15 +106,15 @@ export default {
 
     //API
     const getData = async () => {
-      await GET_CATEGORYLIST_FROM_API();
-      // await GET_FILTEREDCARLIST_FROM_API(categoryCars.value);
+      await getGategoryListFromApi();
+      // await getFilteredCarListFromApi(categoryCars.value);
     };
 
     getData();
 
     //intersection observer
     const intersected = async () => {
-      await GET_FILTEREDCARLIST_FROM_API(categoryCars.value);
+      await getFilteredCarListFromApi(categoryCars.value);
     };
 
     return {

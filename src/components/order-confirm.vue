@@ -163,12 +163,12 @@ export default {
     });
 
     //methods
-    const GET_ORDER_FROM_API = () => store.dispatch("GET_ORDER_FROM_API");
-    const PUT_CANCEL_ORDERID_TO_API = () =>
+    const getOrderFromApi = () => store.dispatch("GET_ORDER_FROM_API");
+    const putCancelOrderToApi = () =>
       store.dispatch("PUT_CANCEL_ORDERID_TO_API");
 
     const cancelOrder = () => {
-      PUT_CANCEL_ORDERID_TO_API();
+      putCancelOrderToApi();
 
       store.dispatch("GET_ORDERID");
       store.dispatch("GET_ORDERCONFIRMED");
@@ -190,15 +190,15 @@ export default {
     };
 
     //API
-    GET_ORDER_FROM_API();
+    getOrderFromApi();
 
     return {
       orderId,
       rentalDuration,
       orderConfirmed,
       convertToDate,
-      GET_ORDER_FROM_API,
-      PUT_CANCEL_ORDERID_TO_API,
+      getOrderFromApi,
+      putCancelOrderToApi,
       cancelOrder,
     };
   },
