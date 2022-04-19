@@ -290,6 +290,8 @@ export default createStore({
           return error;
         });
     },
+    //не разобрался как сделать вызов из файла apiServices - POST, PUT, GET запросов с данными заказа,
+    //поэтому сделал так 
     POST_ORDER_TO_API({ commit }) {
       // apiServices
       //   .postOrder()

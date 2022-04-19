@@ -16,9 +16,9 @@
       </p>
       <p class="summary__additional">
         Доступна с
-        <span class="summary__selected-value"
-          >{{ selectedDateFrom }} {{ selectedTimeFrom }}</span
-        >
+        <span class="summary__selected-value">
+          {{ selectedDateFrom }} {{ selectedTimeFrom }}
+        </span>
       </p>
     </div>
     <img
