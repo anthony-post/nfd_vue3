@@ -58,6 +58,14 @@ export default {
 .tabs__border {
   border-top: 1px solid $color-grey-light;
   border-bottom: 1px solid $color-grey-light;
+
+  @media #{$media} and (min-width: $mobile-min) and (max-width: $mobile-max) {
+     //фиксируем табы при общем скроле страницы
+     position: sticky;
+     top: 98px;
+     background-color: $color-white;
+     z-index: 10;
+   }
 }
 
 .tab-list {
@@ -68,11 +76,11 @@ export default {
   padding: 0 64px;
   margin: 0;
 
-  @media #{$media} and (min-width: 1024px) and (max-width: 1439px) {
+  @media #{$media} and (min-width: $desktop-min) and (max-width: $desktop-max) {
     padding: 0 32px;
   }
 
-  @media #{$media} and (min-width: 320px) and (max-width: 767px) {
+  @media #{$media} and (min-width: $mobile-min) and (max-width: $mobile-max) {
     padding: 0 16px;
     flex-wrap: wrap;
   }
