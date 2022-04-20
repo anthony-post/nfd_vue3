@@ -147,6 +147,13 @@ export default {
 @import "@/assets/styles.scss";
 @import "@/assets/variables.scss";
 
+.tabs {
+   @media #{$media} and (min-width: $mobile-min) and (max-width: $mobile-max) {
+     //смещение на высоту фиксированной шапки
+     padding: 98px 0 0 0;
+   }
+ }
+
 .order {
   display: flex;
   flex-direction: row;
