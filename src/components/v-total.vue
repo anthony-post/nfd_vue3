@@ -139,7 +139,7 @@ export default {
       rateList.value.filter(item => {
         if(item.id === selectedRate.value) {
           nameRate = item.rateTypeId.name;
-        } 
+        }
       });
       return nameRate;
     }, '');

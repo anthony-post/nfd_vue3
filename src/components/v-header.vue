@@ -40,10 +40,10 @@ export default {
     flex-direction: column;
     align-items: flex-end;
     //фиксируем шапку при общем скроле страницы
-     position: fixed;
-     background-color: $color-white;
-     width: 100%;
-     z-index: 10;
+    position: fixed;
+    background-color: $color-white;
+    width: 100%;
+    z-index: 10;
   }
 }
 
