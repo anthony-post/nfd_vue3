@@ -30,7 +30,6 @@
         />
       </p>
       <p>
-        <!--альтернативный вариант выбора даты и время-->
         <VSelectDouble
           :class="{ select_blocked: isSelectedDateFrom }"
           :optionsDate="arrayDate"
