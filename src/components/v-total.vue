@@ -17,11 +17,39 @@
         <span class="total__item-title">Цвет</span>
         <span class="total__item-value">{{ selectedColor }}</span>
       </li>
+      <li class="total__item" v-if="rentalDuration">
+        <span class="total__item-title">Длительность аренды</span>
+        <span class="total__item-value" v-if="rentalDuration.days">
+          {{ rentalDuration.days }}д
+        </span>
+        <span class="total__item-value" v-if="rentalDuration.hours">
+          {{ rentalDuration.hours }}ч
+        </span>
+      </li>
+      <li class="total__item" v-if="getNameRate">
+        <span class="total__item-title">Тариф</span>
+        <span class="total__item-value">{{ getNameRate }}</span>
+      </li>
+      <li class="total__item" v-if="selectedTank">
+        <span class="total__item-title">Полный бак</span>
+        <span class="total__item-value">Да</span>
+      </li>
+      <li class="total__item" v-if="selectedBabyChair">
+        <span class="total__item-title">Детское кресло</span>
+        <span class="total__item-value">Да</span>
+      </li>
+      <li class="total__item" v-if="selectedRightHandDrive">
+        <span class="total__item-title">Правый руль</span>
+        <span class="total__item-value">Да</span>
+      </li>
     </ul>
     <!--Цена-->
     <p class="total__price" v-if="selectedCar.name">
       Цена:
-      <span class="total__price total__price-thin">
+      <span class="total__price total__price-thin" v-if="getPriceSummary">
+        {{ getPriceSummary }} &#8381;
+      </span>
+      <span class="total__price total__price-thin" v-else>
         от {{ selectedCar.priceMin }} до {{ selectedCar.priceMax }} &#8381;
       </span>
     </p>
@@ -55,6 +83,13 @@
     >
       Итого
     </button>
+    <!--Кнопка Заказать-->
+    <button
+      class="total__button total__button_active"
+      v-if="selectedTab === 'order-summary'"
+    >
+      Заказать
+    </button>
   </div>
 </template>
 
@@ -86,32 +121,210 @@ export default {
     const selectedPoint = computed(() => store.state.selectedPoint);
     const selectedCar = computed(() => store.state.selectedCar);
     const selectedColor = computed(() => store.state.selectedColor);
-    const dateFrom = computed(() => store.state.dateFrom);
-    const dateTo = computed(() => store.state.dateTo);
+    const dateStateFrom = computed(() => store.state.dateFrom);
+    const dateStateTo = computed(() => store.state.dateTo);
+    const rentalDuration = computed(() => store.state.rentalDuration);
+    const rateList = computed(() => store.state.rateList);
     const selectedRate = computed(() => store.state.selectedRate);
+    const selectedTank = computed(() => store.state.selectedTank);
+    const selectedBabyChair = computed(() => store.state.selectedBabyChair);
+    const selectedRightHandDrive = computed(
+      () => store.state.selectedRightHandDrive
+    );
+
+    //поиск выбранного id тарифа в массиве и получение его наименования
+    const getNameRate = computed(() => {
+      let nameRate = "";
+      rateList.value.filter(item => {
+         if(item.id === selectedRate.value) {
+           nameRate = item.rateTypeId.name;
+         } 
+      });
+      return nameRate;
+    }, '');
+
+    //подсчет итоговой суммы заказа
+    const getPriceSummary = computed(() => {
+      const rateMinuteId = "62593c9d73b61100181028ed";
+      const rateDayId = "62593cac73b61100181028ee";
+      const rateWeekId = "62593cca73b61100181028ef";
+      const rateWeekSaleId = "62593cd573b61100181028f0";
+      const rateMonthId = "6259003d73b61100181028d9";
+      const rateQuarterId = "62593cf073b61100181028f1";
+      const rateYearId = "62593d0273b61100181028f2";
+      const priceTank = 500;
+      const priceBabyChair = 200;
+      const priceRightHandDrive = 1600;
+
+      let priceCalculated;
+      const duration = dateStateTo.value - dateStateFrom.value;
+
+      rateList.value.forEach((rate) => {
+        //monthly rate
+        if (
+          selectedRate.value === rate.id &&
+          selectedRate.value === rateMonthId
+        ) {
+          const rateMonthPrice = rate.price / (30 * 86400000);
+          if (duration === 30 * 86400000) {
+            priceCalculated = Math.round(duration * rateMonthPrice);
+          } else {
+            alert(
+              "Выберите, пожалуйста, другой тариф или укажите другой диапазон времени"
+            );
+          }
+          priceCalculated = calcAddService(
+            priceCalculated,
+            priceTank,
+            priceBabyChair,
+            priceRightHandDrive
+          );
+        }
+
+        //minute rate
+        if (
+          selectedRate.value === rate.id &&
+          selectedRate.value === rateMinuteId
+        ) {
+          const rateMinutePrice = rate.price / 60000;
+          if (duration > 60000 && duration < 1 * 86400000) {
+            priceCalculated = Math.round(duration * rateMinutePrice);
+          } else {
+            alert(
+              "Выберите, пожалуйста, другой тариф или укажите другой диапазон времени"
+            );
+          }
+          priceCalculated = calcAddService(
+            priceCalculated,
+            priceTank,
+            priceBabyChair,
+            priceRightHandDrive
+          );
+        }
+
+        //dayly rate
+        if (
+          selectedRate.value === rate.id &&
+          selectedRate.value === rateDayId
+        ) {
+          const rateDayPrice = rate.price / 86400000;
+          if (duration >= 86400000 && duration < 7 * 86400000) {
+            priceCalculated = Math.round(duration * rateDayPrice);
+          } else {
+            alert(
+              "Выберите, пожалуйста, другой тариф или укажите другой диапазон времени"
+            );
+          }
+          priceCalculated = calcAddService(
+            priceCalculated,
+            priceTank,
+            priceBabyChair,
+            priceRightHandDrive
+          );
+        }
+
+        //weekly rate
+        if (
+          selectedRate.value === rate.id &&
+          selectedRate.value === rateWeekId
+        ) {
+          const rateWeekPrice = rate.price / (7 * 86400000);
+          if (duration === 7 * 86400000) {
+            priceCalculated = Math.round(duration * rateWeekPrice);
+          } else {
+            alert(
+              "Выберите, пожалуйста, другой тариф или укажите другой диапазон времени"
+            );
+          }
+          priceCalculated = calcAddService(
+            priceCalculated,
+            priceTank,
+            priceBabyChair,
+            priceRightHandDrive
+          );
+        }
+
+        //weekly rate sale
+        if (
+          selectedRate.value === rate.id &&
+          selectedRate.value === rateWeekSaleId
+        ) {
+          const rateWeekSalePrice = rate.price / (7 * 86400000);
+          if (duration === 7 * 86400000) {
+            priceCalculated = Math.round(duration * rateWeekSalePrice);
+          } else {
+            alert(
+              "Выберите, пожалуйста, другой тариф или укажите другой диапазон времени"
+            );
+          }
+          priceCalculated = calcAddService(
+            priceCalculated,
+            priceTank,
+            priceBabyChair,
+            priceRightHandDrive
+          );
+        }
+
+        //3 months rate
+        if (
+          selectedRate.value === rate.id &&
+          selectedRate.value === rateQuarterId
+        ) {
+          const rateQuarterPrice = rate.price / (90 * 86400000);
+          if (duration === 90 * 86400000) {
+            priceCalculated = Math.round(duration * rateQuarterPrice);
+          } else {
+            alert(
+              "Выберите, пожалуйста, другой тариф или укажите другой диапазон времени"
+            );
+          }
+          priceCalculated = calcAddService(
+            priceCalculated,
+            priceTank,
+            priceBabyChair,
+            priceRightHandDrive
+          );
+        }
+
+        //year rate
+        if (
+          selectedRate.value === rate.id &&
+          selectedRate.value === rateYearId
+        ) {
+          const rateYearPrice = rate.price / (365 * 86400000);
+          if (duration === 365 * 86400000) {
+            priceCalculated = Math.round(duration * rateYearPrice);
+          } else {
+            alert(
+              "Выберите, пожалуйста, другой тариф или укажите другой диапазон времени"
+            );
+          }
+          priceCalculated = calcAddService(
+            priceCalculated,
+            priceTank,
+            priceBabyChair,
+            priceRightHandDrive
+          );
+        }
+      });
+
+      store.dispatch("GET_PRICESUMMARY", priceCalculated);
+      return priceCalculated;
+    });
 
     const orderPlaceFilledUp = computed(() => {
-      if (
+      return (
         Object.keys(selectedCity.value).length &&
         Object.keys(selectedPoint.value).length !== 0
-      ) {
-        return true;
-      }
-      return false;
+      )
     });
 
     const orderModelFilledUp = computed(() => {
-      if (Object.keys(selectedCar.value).length !== 0) {
-        return true;
-      }
-      return false;
+      return Object.keys(selectedCar.value).length !== 0
     });
 
     const orderAdditionalFilledUp = computed(() => {
-      if (dateFrom.value && dateTo.value && selectedRate.value) {
-        return true;
-      }
-      return false;
+      return (dateStateFrom.value && dateStateTo.value && selectedRate.value)
     });
 
     //methods
@@ -130,20 +343,46 @@ export default {
       context.emit("updateSelectedTab", newSelectedTab);
     };
 
+    const calcAddService = (
+      priceCalculated,
+      priceTank,
+      priceBabyChair,
+      priceRightHandDrive
+    ) => {
+      if (selectedTank.value) {
+        priceCalculated += priceTank;
+      }
+      if (selectedBabyChair.value) {
+        priceCalculated += priceBabyChair;
+      }
+      if (selectedRightHandDrive.value) {
+        priceCalculated += priceRightHandDrive;
+      }
+      return priceCalculated;
+    };
+
     return {
       selectedCity,
       selectedPoint,
       selectedCar,
       selectedColor,
-      dateFrom,
-      dateTo,
+      dateStateFrom,
+      dateStateTo,
+      rentalDuration,
+      rateList,
       selectedRate,
+      selectedTank,
+      selectedBabyChair,
+      selectedRightHandDrive,
+      getNameRate,
+      getPriceSummary,
       orderPlaceFilledUp,
       orderModelFilledUp,
       orderAdditionalFilledUp,
       changeSelectedTabModel,
       changeSelectedTabAdditional,
       changeSelectedTabSummary,
+      calcAddService,
     };
   },
 };

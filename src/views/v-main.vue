@@ -94,7 +94,7 @@ export default {
   align-items: flex-start;
 
   @media #{$media} and (min-width: $mobile-min) and (max-width: $mobile-max) {
-    padding: 0 0 150px 0;
+    padding: 150px 0 0 0;
   }
 }
 

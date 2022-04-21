@@ -14,7 +14,8 @@
         label="Пункт выдачи"
         name="point"
         placeholder="Начните вводить пункт ..."
-        :itemList="FILTERED_POINTLIST"
+        :class="{ input_blocked: isSelectedCity }"
+        :itemList="filteredPointList"
         :selectedItem="selectedPoint"
         @on-item-selected="setSelectedPoint"
         @on-item-reset="resetSelectedPoint"
@@ -41,7 +42,6 @@ export default {
   },
   props: ["idTab"],
   setup(props, context) {
-    //const
     const store = useStore();
     //массив городов с координатами
     const cityListCoords = [
@@ -139,7 +139,7 @@ export default {
     const componentKey = ref(0);
 
     //computed
-    const FILTERED_POINTLIST = computed(() => store.getters.FILTERED_POINTLIST);
+    const filteredPointList = computed(() => store.getters.FILTERED_POINTLIST);
     const cityList = computed(() => store.state.cityList);
     const selectedCity = computed(() => store.state.selectedCity);
     const selectedPoint = computed(() => store.state.selectedPoint);
@@ -147,7 +147,7 @@ export default {
     //выбранный объект города c координатми города и его пунктов выдачи
     const chosenCityObj = computed(() => {
       let newObjCity = {};
-      for (var i = 0; i < cityListCoords.length; i++) {
+      for (let i = 0; i < cityListCoords.length; i++) {
         if (selectedCity.value.id === cityListCoords[i].id) {
           //в выбранный объект города добавляются его координаты
           //добавление  нового свойства (массив с пунктами выдачи и их координатами) в объект
@@ -163,50 +163,78 @@ export default {
 
     //добавление координат пунктов выдачи в отфильтрованный массив с объектами пунктов выдачи
     const newPointListWithCoordsArr = computed(() => {
-      return FILTERED_POINTLIST.value.map((item) => {
+      return filteredPointList.value.map((item) => {
         const foundPoint = pointListCoords.find(
-          (point) => point.id === item.id
+          point => point.id === item.id
         );
 
         return foundPoint ? { ...item, coordsPoint: foundPoint.coords } : item;
       });
     });
 
+    const isSelectedCity = computed(() => {
+      return Object.keys(selectedCity.value).length === 0
+    });
+
     //methods
-    function GET_CITYLIST_FROM_API() {
+    const getCityListFromApi = () => {
       store.dispatch("GET_CITYLIST_FROM_API");
-    }
+    };
 
-    function GET_POINTLIST_FROM_API() {
+    const getPointListFromApi = () => {
       store.dispatch("GET_POINTLIST_FROM_API");
-    }
+    };
 
-    function setSelectedCity(chosenItem) {
+    const setSelectedCity = (chosenItem) => {
       store.dispatch("GET_SELECTEDCITY", chosenItem);
-    }
+    };
 
-    function resetSelectedCity() {
+    const resetSelectedCity = () => {
       store.dispatch("GET_SELECTEDCITY");
       store.dispatch("GET_SELECTEDPOINT");
-      context.emit("on-tab-reset", props.idTab); //отправляем событие в компонет v-tab, где будет вызван метод сброса вкладок
-    }
+      store.dispatch("GET_CHECKEDCATEGORY");
+      store.dispatch("GET_SELECTEDCAR");
+      store.dispatch("GET_CHECKEDCOLOR");
+      store.dispatch("GET_SELECTEDDATEFROM");
+      store.dispatch("GET_SELECTEDTIMEFROM");
+      store.dispatch("GET_SELECTEDDATETO");
+      store.dispatch("GET_SELECTEDTIMETO");
+      store.dispatch("GET_RENTALDURATION");
+      store.dispatch("GET_CHECKEDRATE");
+      store.dispatch("GET_CHECKEDTANK");
+      store.dispatch("GET_CHECKEDBABYCHAIR");
+      store.dispatch("GET_CHECKEDRIGHTHANDDRIVE");
+      context.emit("on-tab-reset", props.idTab); //отправляем событие в компонет order-window, где будет вызван метод сброса вкладок
+    };
 
-    function setSelectedPoint(chosenItem) {
+    const setSelectedPoint = (chosenItem) => {
       store.dispatch("GET_SELECTEDPOINT", chosenItem);
-    }
+    };
 
-    function resetSelectedPoint() {
+    const resetSelectedPoint = () => {
       store.dispatch("GET_SELECTEDPOINT");
+      store.dispatch("GET_CHECKEDCATEGORY");
+      store.dispatch("GET_SELECTEDCAR");
+      store.dispatch("GET_CHECKEDCOLOR");
+      store.dispatch("GET_SELECTEDDATEFROM");
+      store.dispatch("GET_SELECTEDTIMEFROM");
+      store.dispatch("GET_SELECTEDDATETO");
+      store.dispatch("GET_SELECTEDTIMETO");
+      store.dispatch("GET_RENTALDURATION");
+      store.dispatch("GET_CHECKEDRATE");
+      store.dispatch("GET_CHECKEDTANK");
+      store.dispatch("GET_CHECKEDBABYCHAIR");
+      store.dispatch("GET_CHECKEDRIGHTHANDDRIVE");
       context.emit("on-tab-reset", props.idTab);
-    }
+    };
 
-    function forceRerenderMap() {
+    const forceRerenderMap = () => {
       componentKey.value += 1;
-    }
+    };
 
     //API
-    GET_CITYLIST_FROM_API();
-    GET_POINTLIST_FROM_API();
+    getCityListFromApi();
+    getPointListFromApi();
 
     //ререндеринг компонента карты если выбран/сброшен город или пункт выдачи
     watch([selectedCity, selectedPoint], () => {
@@ -220,15 +248,16 @@ export default {
       cityList,
       selectedCity,
       selectedPoint,
-      FILTERED_POINTLIST,
+      filteredPointList,
       chosenCityObj,
       newPointListWithCoordsArr,
+      isSelectedCity,
       setSelectedCity,
       resetSelectedCity,
       setSelectedPoint,
       resetSelectedPoint,
-      GET_CITYLIST_FROM_API,
-      GET_POINTLIST_FROM_API,
+      getCityListFromApi,
+      getPointListFromApi,
       forceRerenderMap,
     };
   },
@@ -243,6 +272,11 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+}
+
+.input_blocked {
+  pointer-events: none;
+  opacity: 0.5;
 }
 
 .place__text {
