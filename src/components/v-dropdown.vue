@@ -8,6 +8,7 @@
       :name="name"
       :placeholder="placeholder"
       type="text"
+      autocomplete="off"
       @focus="isDropDownVisible = true"
     /><span
       class="input-block__cross-icon"

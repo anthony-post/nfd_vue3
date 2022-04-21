@@ -28,11 +28,11 @@ export default {
       let rateZoom = null; //сюда будет записываться величина зума карты
       //если выбран пункт выдачи, то подставляются координаты этого пункта
       if (Object.keys(selectedPoint.value).length !== 0) {
-          const foundPoint = props.chosenCityObj.points.find(
-              (point) => point.id === selectedPoint.value.id
-          );
-          coords = foundPoint.coordsPoint;
-          rateZoom = 15;
+        const foundPoint = props.chosenCityObj.points.find(
+          (point) => point.id === selectedPoint.value.id
+        );
+        coords = foundPoint.coordsPoint;
+        rateZoom = 15;
       }
       //иначе если выбран город, то подставляются координаты этого города
       else if (Object.keys(selectedCity.value).length !== 0) {

@@ -1,21 +1,22 @@
 import { createStore } from "vuex";
 import apiServices from "../services/apiServices";
 
+const limit = 5;
+
 export default createStore({
   state: {
     //API
     cityList: [],
     pointList: [],
+    // carList: [],
+    categoryList: [],
+    cars: {},
+
     //USER SELECTED
     selectedCity: {},
     selectedPoint: {},
-    // selectedCar: {},
-    selectedCar: {
-      id: 1,
-      name: "Aston Martin",
-      priceMin: 8000,
-      priceMax: 15000,
-    }, //тестовый объект для переключения вкладки
+    checkedCategoryCars: "",
+    selectedCar: {},
     selectedColor: "",
     dateFrom: 0,
     dateTo: 0,
@@ -29,6 +30,43 @@ export default createStore({
     SET_POINTLIST_TO_STATE: (state, pointList) => {
       state.pointList = pointList.data.data;
     },
+
+    //категории
+    SET_CATEGORYLIST_TO_STATE: (state, categories) => {
+      state.categoryList = categories;
+
+      state.cars["no-filter"] = {
+        value: [],
+        page: 0,
+      };
+
+      categories.forEach((category) => {
+        state.cars[category.id] = {
+          value: [],
+          page: 0,
+        };
+      });
+    },
+
+    //авто
+    SET_CARS_DATA: (state, { carsData, categoryId }) => {
+      if (!categoryId) {
+        const carsAllCategory = state.cars["no-filter"];
+        carsAllCategory.value.push(...carsData.data.data);
+
+        if(carsAllCategory.value.length <= carsData.data.count) {
+          carsAllCategory.page++;
+        }
+      } else {
+        const carsByCategory = state.cars[categoryId];
+        carsByCategory.value.push(...carsData.data.data);
+
+        if(carsByCategory.value.length <= carsData.data.count) {
+          carsByCategory.page++;
+        }
+      }
+    },
+
     //CITY
     SET_SELECTEDCITY(state, selectedCity) {
       state.selectedCity = selectedCity;
@@ -42,6 +80,20 @@ export default createStore({
     },
     RESET_SELECTEDPOINT(state) {
       state.selectedPoint = {};
+    },
+    //CATEGORY CAR
+    SET_CHECKEDCATEGORYCAR(state, checkedCategoryCars) {
+      state.checkedCategoryCars = checkedCategoryCars;
+    },
+    RESET_CHECKEDCATEGORYCAR(state) {
+      state.checkedCategoryCars = "";
+    },
+    //CAR
+    SET_SELECTEDCAR(state, selectedCar) {
+      state.selectedCar = selectedCar;
+    },
+    RESET_SELECTEDCAR(state) {
+      state.selectedCar = {};
     },
   },
   actions: {
@@ -70,6 +122,22 @@ export default createStore({
           return error;
         });
     },
+    async GET_CATEGORYLIST_FROM_API({ commit }) {
+      const categories = await apiServices.getCategories();
+      commit("SET_CATEGORYLIST_TO_STATE", categories.data.data);
+    },
+    async GET_FILTEREDCARLIST_FROM_API({ commit, state }, categoryId) {
+      if (categoryId === "no-filter") {
+        const page = state.cars["no-filter"]?.page;
+        const carsData = await apiServices.getCars({ page, limit });
+        commit("SET_CARS_DATA", { carsData });
+      } else {
+        const page = state.cars[categoryId]?.page;
+        const carsData = await apiServices.getCars({ categoryId, page, limit });
+        commit("SET_CARS_DATA", { carsData, categoryId });
+      }
+    },
+
     //SELECTED
     GET_SELECTEDCITY({ commit }, chosenItem) {
       if (chosenItem) {
@@ -85,6 +153,20 @@ export default createStore({
         commit("RESET_SELECTEDPOINT");
       }
     },
+    GET_CHECKEDCATEGORY({ commit }, chosenItem) {
+      if (chosenItem) {
+        commit("SET_CHECKEDCATEGORYCAR", chosenItem);
+      } else {
+        commit("RESET_CHECKEDCATEGORYCAR");
+      }
+    },
+    GET_SELECTEDCAR({ commit }, chosenItem) {
+      if (chosenItem) {
+        commit("SET_SELECTEDCAR", chosenItem);
+      } else {
+        commit("RESET_SELECTEDCAR");
+      }
+    },
   },
   getters: {
     FILTERED_POINTLIST(state) {
@@ -97,6 +179,13 @@ export default createStore({
       } else {
         const arr = [];
         return arr;
+      }
+    },
+    FILTERED_CARSDATA_BY_CATEGORY: (state) => (categoryId) => {
+      if (categoryId === "no-filter") {
+        return state.cars["no-filter"]?.value;
+      } else {
+        return state.cars[categoryId]?.value;
       }
     },
   },

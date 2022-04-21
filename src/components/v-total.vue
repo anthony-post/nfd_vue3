@@ -21,10 +21,9 @@
     <!--Цена-->
     <p class="total__price" v-if="selectedCar.name">
       Цена:
-      <span class="total__price total__price-thin"
-        >от {{ selectedCar.priceMin }} до
-        {{ selectedCar.priceMax }} &#8381;</span
-      >
+      <span class="total__price total__price-thin">
+        от {{ selectedCar.priceMin }} до {{ selectedCar.priceMax }} &#8381;
+      </span>
     </p>
     <!--Кнопка Выбрать модель-->
     <button
@@ -116,20 +115,20 @@ export default {
     });
 
     //methods
-    function changeSelectedTabModel() {
+    const changeSelectedTabModel = () => {
       const newSelectedTab = props.tabs[props.selectedId + 1].id;
       context.emit("updateSelectedTab", newSelectedTab);
-    }
+    };
 
-    function changeSelectedTabAdditional() {
+    const changeSelectedTabAdditional = () => {
       const newSelectedTab = props.tabs[props.selectedId + 2].id;
       context.emit("updateSelectedTab", newSelectedTab);
-    }
+    };
 
-    function changeSelectedTabSummary() {
+    const changeSelectedTabSummary = () => {
       const newSelectedTab = props.tabs[props.selectedId + 3].id;
       context.emit("updateSelectedTab", newSelectedTab);
-    }
+    };
 
     return {
       selectedCity,
