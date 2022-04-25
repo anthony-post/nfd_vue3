@@ -56,7 +56,7 @@
     <!--Кнопка Выбрать модель-->
     <button
       class="total__button"
-      v-if="selectedTab === 'order-place'"
+      v-if="selectedTab === tabs[0].id"
       :class="{ total__button_active: orderPlaceFilledUp }"
       :disabled="!orderPlaceFilledUp"
       @click="changeSelectedTabModel"
@@ -66,7 +66,7 @@
     <!--Кнопка Дополнительно-->
     <button
       class="total__button"
-      v-if="selectedTab === 'order-model'"
+      v-if="selectedTab === tabs[1].id"
       :class="{ total__button_active: orderModelFilledUp }"
       :disabled="!orderModelFilledUp"
       @click="changeSelectedTabAdditional"
@@ -76,7 +76,7 @@
     <!--Кнопка Итого-->
     <button
       class="total__button"
-      v-if="selectedTab === 'order-additional'"
+      v-if="selectedTab === tabs[2].id"
       :class="{ total__button_active: orderAdditionalFilledUp }"
       :disabled="!orderAdditionalFilledUp"
       @click="changeSelectedTabSummary"
@@ -86,20 +86,25 @@
     <!--Кнопка Заказать-->
     <button
       class="total__button total__button_active"
-      v-if="selectedTab === 'order-summary'"
+      v-if="selectedTab === tabs[3].id"
       @click="showPopUp"
     >
       Заказать
     </button>
+    <PopUp v-if="!popUpIsActive" @close-popup="closePopUp" />
   </div>
 </template>
 
 <script>
-import { computed } from "vue";
+import { ref, computed } from "vue";
 import { useStore } from "vuex";
+import PopUp from "@/components/pop-up.vue";
 
 export default {
   name: "v-total",
+  components: {
+    PopUp,
+  },
   props: {
     tabs: {
       type: Array,
@@ -170,6 +175,10 @@ export default {
           if (duration === 30 * 86400000) {
             priceCalculated = Math.round(duration * rateMonthPrice);
           } else {
+            store.dispatch("GET_CHECKEDRATE");
+            store.dispatch("GET_CHECKEDTANK");
+            store.dispatch("GET_CHECKEDBABYCHAIR");
+            store.dispatch("GET_CHECKEDRIGHTHANDDRIVE");
             alert(
               "Выберите, пожалуйста, другой тариф или укажите другой диапазон времени"
             );
@@ -191,6 +200,10 @@ export default {
           if (duration > 60000 && duration < 1 * 86400000) {
             priceCalculated = Math.round(duration * rateMinutePrice);
           } else {
+            store.dispatch("GET_CHECKEDRATE");
+            store.dispatch("GET_CHECKEDTANK");
+            store.dispatch("GET_CHECKEDBABYCHAIR");
+            store.dispatch("GET_CHECKEDRIGHTHANDDRIVE");
             alert(
               "Выберите, пожалуйста, другой тариф или укажите другой диапазон времени"
             );
@@ -212,6 +225,10 @@ export default {
           if (duration >= 86400000 && duration < 7 * 86400000) {
             priceCalculated = Math.round(duration * rateDayPrice);
           } else {
+            store.dispatch("GET_CHECKEDRATE");
+            store.dispatch("GET_CHECKEDTANK");
+            store.dispatch("GET_CHECKEDBABYCHAIR");
+            store.dispatch("GET_CHECKEDRIGHTHANDDRIVE");
             alert(
               "Выберите, пожалуйста, другой тариф или укажите другой диапазон времени"
             );
@@ -233,6 +250,10 @@ export default {
           if (duration === 7 * 86400000) {
             priceCalculated = Math.round(duration * rateWeekPrice);
           } else {
+            store.dispatch("GET_CHECKEDRATE");
+            store.dispatch("GET_CHECKEDTANK");
+            store.dispatch("GET_CHECKEDBABYCHAIR");
+            store.dispatch("GET_CHECKEDRIGHTHANDDRIVE");
             alert(
               "Выберите, пожалуйста, другой тариф или укажите другой диапазон времени"
             );
@@ -254,6 +275,10 @@ export default {
           if (duration === 7 * 86400000) {
             priceCalculated = Math.round(duration * rateWeekSalePrice);
           } else {
+            store.dispatch("GET_CHECKEDRATE");
+            store.dispatch("GET_CHECKEDTANK");
+            store.dispatch("GET_CHECKEDBABYCHAIR");
+            store.dispatch("GET_CHECKEDRIGHTHANDDRIVE");
             alert(
               "Выберите, пожалуйста, другой тариф или укажите другой диапазон времени"
             );
@@ -275,6 +300,10 @@ export default {
           if (duration === 90 * 86400000) {
             priceCalculated = Math.round(duration * rateQuarterPrice);
           } else {
+            store.dispatch("GET_CHECKEDRATE");
+            store.dispatch("GET_CHECKEDTANK");
+            store.dispatch("GET_CHECKEDBABYCHAIR");
+            store.dispatch("GET_CHECKEDRIGHTHANDDRIVE");
             alert(
               "Выберите, пожалуйста, другой тариф или укажите другой диапазон времени"
             );
@@ -296,6 +325,10 @@ export default {
           if (duration === 365 * 86400000) {
             priceCalculated = Math.round(duration * rateYearPrice);
           } else {
+            store.dispatch("GET_CHECKEDRATE");
+            store.dispatch("GET_CHECKEDTANK");
+            store.dispatch("GET_CHECKEDBABYCHAIR");
+            store.dispatch("GET_CHECKEDRIGHTHANDDRIVE");
             alert(
               "Выберите, пожалуйста, другой тариф или укажите другой диапазон времени"
             );
@@ -362,10 +395,14 @@ export default {
       return priceCalculated;
     };
 
+    //pop-up
+    const popUpIsActive = ref(true);
     const showPopUp = () => {
-        const popUpIsActive = true;
-        store.dispatch("GET_POPUPCONFIRM", popUpIsActive);
-        store.dispatch("POST_ORDER_TO_API");
+      popUpIsActive.value = !popUpIsActive.value;
+      store.dispatch("POST_ORDER_TO_API");
+    };
+    const closePopUp = () => {
+      popUpIsActive.value = !popUpIsActive.value;
     };
 
     return {
@@ -390,7 +427,9 @@ export default {
       changeSelectedTabAdditional,
       changeSelectedTabSummary,
       calcAddService,
+      popUpIsActive,
       showPopUp,
+      closePopUp,
     };
   },
 };

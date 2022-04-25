@@ -1,11 +1,10 @@
 <template>
   <transition name="modal">
     <div class="modal-mask">
-      <div class="modal-wrapper">
         <div class="modal-container">
-          <div class="modal-body">
+          <p class="modal-body">
           Подтвердить заказ
-          </div>
+          </p>
           <div class="modal-footer">
               <router-link
                 v-if="orderId"
@@ -23,7 +22,6 @@
               </button>
           </div>
         </div>
-      </div>
     </div>
   </transition>
 </template>
@@ -31,10 +29,12 @@
 <script>
 import { useStore } from "vuex";
 import { computed } from "vue";
+// import apiServices from "../services/apiServices";
+import axios from "axios";
 
 export default {
   name: "popup",
-  setup() {
+  setup(_, context) {
     const store = useStore();
 
     //computed
@@ -42,11 +42,33 @@ export default {
 
     //methods
     const confirmOrder = () => {
-      store.dispatch("PUT_CONFIRM_ORDERID_TO_API");
+      //не срабатывает в такой записи
+      // const orderConfirmedStatusId = "5e26a1f0099b810b946c5d8b";
+      // const orderStatusId = orderConfirmedStatusId;
+      // apiServices.putOrder(orderId.value, { orderStatusId });
+
+      const mainUrl = "https://api-factory.simbirsoft1.com/api/db/order/";
+      const orderUrl = mainUrl + orderId.value;
+      const orderConfirmedStatusId = "5e26a1f0099b810b946c5d8b";
+      axios(orderUrl, {
+        method: "PUT",
+        headers: {
+          "X-Api-Factory-Application-Id": "5e25c641099b810b946c5d5b",
+        },
+        data: {
+          orderStatusId: orderConfirmedStatusId,
+        },
+      })
+        .catch((error) => {
+          console.log(error);
+          return error;
+        });
+
+      // store.dispatch("PUT_CONFIRM_ORDERID_TO_API");
     };
 
     const closePopUp = () => {
-      store.dispatch("GET_POPUPCONFIRM");
+      context.emit("close-popup");
     };
 
     return {
@@ -72,14 +94,11 @@ export default {
   transition: opacity 0.3s ease;
 }
 
-.modal-wrapper {
+.modal-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
   height: 100%;
-}
-
-.modal-container {
   margin: 0 auto;
   transition: all 0.3s ease;
 }

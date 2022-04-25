@@ -27,7 +27,14 @@ export default {
   getRate() {
     return axiosConfig.get(url.RATE);
   },
-  postOrder() {
-    return axiosConfig.post(url.ORDER);
+  // postOrder() {
+  //   return axiosConfig.post(url.ORDER);
+  // },
+  
+  //не срабатывает в такой записи
+  putOrder(idOrder, data = {}) {
+    return axiosConfig.put(url.ORDER + '/' + idOrder, {
+      data,
+    });
   },
 };

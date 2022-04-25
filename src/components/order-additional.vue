@@ -30,9 +30,8 @@
         />
       </p>
       <p>
-        <!--альтернативный вариант выбора даты и время-->
         <VSelectDouble
-          :class="{ select_blocked: isSelectedDateFrom }"
+          :class="{ select_blocked: !isSelectedDateFrom }"
           :optionsDate="arrayDate"
           :optionsTime="arrayTime"
           @selectDate="setSelectedDateTo"
@@ -47,7 +46,7 @@
     <p class="additional__text">Тариф</p>
     <div
       class="tarif-wrp"
-      :class="{ select_blocked: isSelectedDateFromTo }"
+      :class="{ select_blocked: !isSelectedDateFromTo }"
     >
       <VRadio
         v-model:checkedValue="checkedRate"
@@ -67,7 +66,7 @@
     <div
       class="services-wrp"
       :class="{
-        select_blocked: isSelectedDateRate,
+        select_blocked: !isSelectedDateRate,
       }"
     >
       <VCheckbox v-model="checkedTank" label="Полный бак, 500р" value="Да" />
@@ -103,7 +102,6 @@ export default {
     const store = useStore();
 
     //ref
-    const arrayDateFrom = ref([]);
     const arrayDate = ref([]);
     const arrayTime = ref([]);
 
@@ -170,13 +168,13 @@ export default {
     });
 
     const isSelectedDateFrom = computed(() => {
-      return (!dateStateFrom.value);
+      return (dateStateFrom.value);
     });
     const isSelectedDateFromTo = computed(() => {
-      return (!dateStateFrom.value || !dateStateTo.value);
+      return (dateStateFrom.value && dateStateTo.value);
     });
     const isSelectedDateRate = computed(() => {
-      return (!dateStateFrom.value || !dateStateTo.value || !selectedRate.value);
+      return (dateStateFrom.value && dateStateTo.value && selectedRate.value);
     });
 
     //methods
@@ -195,21 +193,12 @@ export default {
       for (let i = 0; i <= 90; i++) {
         dateObj.setDate(dateObj.getDate() + 1);
         let newDate = formatedDate(dateObj);
-
-        let dateFromString = newDate + " " + "00:00";
-        let newObjDateFrom = {
-          id: i,
-          value: dateObj.getTime(),
-          dateString: dateFromString,
-        };
-        arrayDateFrom.value.push(newObjDateFrom); //запись в массив дат и время для выбора дат и времени в первом селекте
-
         let newObjDate = {
           id: i,
           value: dateObj.getTime(),
           dateString: newDate,
         };
-        arrayDate.value.push(newObjDate); //запись в массив дат для выбора во втором селекте
+        arrayDate.value.push(newObjDate); //запись в массив дат для выбора в селекте
       }
     };
 
@@ -335,6 +324,9 @@ export default {
     };
     const resetSelectedRate = () => {
       store.dispatch("GET_CHECKEDRATE");
+      store.dispatch("GET_CHECKEDTANK");
+      store.dispatch("GET_CHECKEDBABYCHAIR");
+      store.dispatch("GET_CHECKEDRIGHTHANDDRIVE");
     };
 
     //SELECTED TANK
@@ -370,7 +362,6 @@ export default {
     getRateFromApi();
 
     return {
-      arrayDateFrom,
       arrayDate,
       arrayTime,
       rateList,
@@ -432,6 +423,16 @@ export default {
 .radio-list {
   display: flex;
   margin-bottom: 30px;
+}
+
+.item_blocked {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.item_available {
+  opacity: 1;
+  pointer-events: unset;
 }
 
 .additional__text {

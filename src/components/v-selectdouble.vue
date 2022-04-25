@@ -24,6 +24,7 @@
             class="select__options-item select__text"
             v-for="option in optionsDate"
             :key="option.id"
+            :class="{ item_blocked: option.value < chosenDateFromMs }"
             @click="selectDate(option)"
           >
             <!--обработчик клика по опции из списка-->
@@ -38,6 +39,7 @@
             class="select__options-item select__text"
             v-for="option in optionsTime"
             :key="option.id"
+            :class="{ item_blocked: chosenDateFromMs === chosenDateToMs && option.value <= chosenTimeFromMs }"
             @click="selectTime(option)"
           >
             <!--обработчик клика по опции из списка-->
@@ -51,7 +53,10 @@
 
 <script>
 import { ref } from "vue";
+import { computed } from "vue";
 import Vicon from "@/components/v-icon.vue";
+import { useStore } from "vuex";
+
 export default {
   name: "v-selectdouble",
   components: {
@@ -84,8 +89,14 @@ export default {
     },
   },
   setup(props, context) {
+    const store = useStore();
     //ref
     const areOptionsVisible = ref(false);
+    //computed
+    const chosenDateFromMs = computed(() => store.state.chosenDateFromMs);
+    const chosenTimeFromMs = computed(() => store.state.chosenTimeFromMs);
+    const chosenDateToMs = computed(() => store.state.chosenDateToMs);
+    const chosenTimeToMs = computed(() => store.state.chosenTimeToMs);
     //methods
     const selectDate = option => {
       context.emit("selectDate", option);
@@ -110,6 +121,10 @@ export default {
     };
     return {
       areOptionsVisible,
+      chosenDateFromMs,
+      chosenTimeFromMs,
+      chosenDateToMs,
+      chosenTimeToMs,
       selectDate,
       selectTime,
       resetOption,
@@ -193,5 +208,10 @@ export default {
   &:hover {
     background: $color-grey-light;
   }
+}
+
+.item_blocked {
+  pointer-events: none;
+  opacity: 0.5;
 }
 </style>
