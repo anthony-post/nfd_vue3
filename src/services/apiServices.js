@@ -27,11 +27,15 @@ export default {
   getRate() {
     return axiosConfig.get(url.RATE);
   },
-  // postOrder() {
-  //   return axiosConfig.post(url.ORDER);
-  // },
+
+  //в такой записи выходит ошибка 400 ???
+  postOrder(data = {}) {
+    return axiosConfig.post(url.ORDER, {
+      data,
+    });
+  },
   
-  //не срабатывает в такой записи
+  //в такой записи выходит ошибка ???
   putOrder(idOrder, data = {}) {
     return axiosConfig.put(url.ORDER + '/' + idOrder, {
       data,

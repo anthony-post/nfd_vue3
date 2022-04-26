@@ -30,7 +30,7 @@
 import { useStore } from "vuex";
 import { computed } from "vue";
 // import apiServices from "../services/apiServices";
-import axios from "axios";
+// import axios from "axios";
 
 export default {
   name: "popup",
@@ -47,24 +47,7 @@ export default {
       // const orderStatusId = orderConfirmedStatusId;
       // apiServices.putOrder(orderId.value, { orderStatusId });
 
-      const mainUrl = "https://api-factory.simbirsoft1.com/api/db/order/";
-      const orderUrl = mainUrl + orderId.value;
-      const orderConfirmedStatusId = "5e26a1f0099b810b946c5d8b";
-      axios(orderUrl, {
-        method: "PUT",
-        headers: {
-          "X-Api-Factory-Application-Id": "5e25c641099b810b946c5d5b",
-        },
-        data: {
-          orderStatusId: orderConfirmedStatusId,
-        },
-      })
-        .catch((error) => {
-          console.log(error);
-          return error;
-        });
-
-      // store.dispatch("PUT_CONFIRM_ORDERID_TO_API");
+      store.dispatch("PUT_CONFIRM_ORDERID_TO_API");
     };
 
     const closePopUp = () => {

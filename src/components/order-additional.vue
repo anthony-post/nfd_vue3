@@ -123,59 +123,34 @@ export default {
     );
 
     const checkedColor = computed({
-      get: () => {
-        return selectedColor.value;
-      },
-      set: (checkedColorCar) => {
-        store.dispatch("GET_CHECKEDCOLOR", checkedColorCar);
-      },
+      get: () => selectedColor.value,
+      set: (checkedColorCar) => store.dispatch("GET_CHECKEDCOLOR", checkedColorCar),
     });
 
     const checkedRate = computed({
-      get: () => {
-        return selectedRate.value;
-      },
-      set: (checkedRateCar) => {
-        store.dispatch("GET_CHECKEDRATE", checkedRateCar);
-      },
+      get: () => selectedRate.value,
+      set: (checkedRateCar) => store.dispatch("GET_CHECKEDRATE", checkedRateCar),
     });
 
     const checkedTank = computed({
-      get: () => {
-        return selectedTank.value;
-      },
-      set: (checkedTankCar) => {
-        store.dispatch("GET_CHECKEDTANK", checkedTankCar);
-      },
+      get: () => selectedTank.value,
+      set: (checkedTankCar) => store.commit("SET_SELECTEDTANK", checkedTankCar),
+        // store.dispatch("GET_CHECKEDTANK", checkedTankCar),
     });
 
     const checkedBabyChair = computed({
-      get: () => {
-        return selectedBabyChair.value;
-      },
-      set: (checkedBabyChairCar) => {
-        store.dispatch("GET_CHECKEDBABYCHAIR", checkedBabyChairCar);
-      },
+      get: () => selectedBabyChair.value,
+      set: (checkedBabyChairCar) => store.dispatch("GET_CHECKEDBABYCHAIR", checkedBabyChairCar),
     });
 
     const checkedRightHandDrive = computed({
-      get: () => {
-        return selectedRightHandDrive.value;
-      },
-      set: (checkedRightHandDriveCar) => {
-        store.dispatch("GET_CHECKEDRIGHTHANDDRIVE", checkedRightHandDriveCar);
-      },
+      get: () => selectedRightHandDrive.value,
+      set: (checkedRightHandDriveCar) => store.dispatch("GET_CHECKEDRIGHTHANDDRIVE", checkedRightHandDriveCar),
     });
 
-    const isSelectedDateFrom = computed(() => {
-      return (dateStateFrom.value);
-    });
-    const isSelectedDateFromTo = computed(() => {
-      return (dateStateFrom.value && dateStateTo.value);
-    });
-    const isSelectedDateRate = computed(() => {
-      return (dateStateFrom.value && dateStateTo.value && selectedRate.value);
-    });
+    const isSelectedDateFrom = computed(() => dateStateFrom.value);
+    const isSelectedDateFromTo = computed(() => dateStateFrom.value && dateStateTo.value);
+    const isSelectedDateRate = computed(() => dateStateFrom.value && dateStateTo.value && selectedRate.value);
 
     //methods
     //получение списка тарифов по API

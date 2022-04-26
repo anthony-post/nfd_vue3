@@ -302,15 +302,11 @@ export default createStore({
           return error;
         });
     },
+
     POST_ORDER_TO_API({ commit }) {
-      // apiServices
-      //   .postOrder()
-      axios("https://api-factory.simbirsoft1.com/api/db/order", {
-        method: "POST",
-        headers: {
-          "X-Api-Factory-Application-Id": "5e25c641099b810b946c5d5b",
-        },
-        data: {
+      // в такой записи выходит ошибка 400 ???
+      apiServices
+        .postOrder({
           orderStatusId: this.state.orderNewStatusId,
           cityId: this.state.selectedCity.id,
           pointId: this.state.selectedPoint.id,
@@ -323,8 +319,27 @@ export default createStore({
           isFullTank: this.state.selectedTank,
           isNeedChildChair: this.state.selectedBabyChair,
           isRightWheel: this.state.selectedRightHandDrive,
-        },
-      })
+        })
+      // axios("https://api-factory.simbirsoft1.com/api/db/order", {
+      //   method: "POST",
+      //   headers: {
+      //     "X-Api-Factory-Application-Id": "5e25c641099b810b946c5d5b",
+      //   },
+      //   data: {
+      //     orderStatusId: this.state.orderNewStatusId,
+      //     cityId: this.state.selectedCity.id,
+      //     pointId: this.state.selectedPoint.id,
+      //     carId: this.state.selectedCar.id,
+      //     color: this.state.selectedColor,
+      //     dateFrom: this.state.dateFrom,
+      //     dateTo: this.state.dateTo,
+      //     rateId: this.state.selectedRate,
+      //     price: this.state.priceSummary,
+      //     isFullTank: this.state.selectedTank,
+      //     isNeedChildChair: this.state.selectedBabyChair,
+      //     isRightWheel: this.state.selectedRightHandDrive,
+      //   },
+      // })
         .then((order) => {
           commit("SET_ORDERID_TO_STATE", order);
           return order;
@@ -334,23 +349,23 @@ export default createStore({
           return error;
         });
     },
-    // PUT_CONFIRM_ORDERID_TO_API() {
-    //   const mainUrl = "https://api-factory.simbirsoft1.com/api/db/order/";
-    //   const orderUrl = mainUrl + this.state.orderId;
-    //   axios(orderUrl, {
-    //     method: "PUT",
-    //     headers: {
-    //       "X-Api-Factory-Application-Id": "5e25c641099b810b946c5d5b",
-    //     },
-    //     data: {
-    //       orderStatusId: this.state.orderConfirmedStatusId,
-    //     },
-    //   })
-    //     .catch((error) => {
-    //       console.log(error);
-    //       return error;
-    //     });
-    // },
+    PUT_CONFIRM_ORDERID_TO_API() {
+      const mainUrl = "https://api-factory.simbirsoft1.com/api/db/order/";
+      const orderUrl = mainUrl + this.state.orderId;
+      axios(orderUrl, {
+        method: "PUT",
+        headers: {
+          "X-Api-Factory-Application-Id": "5e25c641099b810b946c5d5b",
+        },
+        data: {
+          orderStatusId: this.state.orderConfirmedStatusId,
+        },
+      })
+        .catch((error) => {
+          console.log(error);
+          return error;
+        });
+    },
     GET_ORDER_FROM_API({ commit }) {
       const mainUrl = "https://api-factory.simbirsoft1.com/api/db/order/";
       const orderUrl = mainUrl + this.state.orderId;
