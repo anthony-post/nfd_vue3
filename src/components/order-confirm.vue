@@ -10,7 +10,7 @@
 import Vheader from "@/components/v-header.vue";
 
 export default {
-    name: "order-confirm",
+  name: "order-confirm",
   components: {
     Vheader,
   },

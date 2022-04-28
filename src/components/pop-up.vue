@@ -29,8 +29,7 @@
 <script>
 import { useStore } from "vuex";
 import { computed } from "vue";
-// import apiServices from "../services/apiServices";
-// import axios from "axios";
+import apiServices from "../services/apiServices";
 
 export default {
   name: "popup",
@@ -41,13 +40,14 @@ export default {
     const orderId = computed(() => store.state.orderId);
 
     //methods
-    const confirmOrder = () => {
-      //не срабатывает в такой записи
-      // const orderConfirmedStatusId = "5e26a1f0099b810b946c5d8b";
-      // const orderStatusId = orderConfirmedStatusId;
-      // apiServices.putOrder(orderId.value, { orderStatusId });
+    const putConfirmOrderIdToApi = async () => {
+      const orderConfirmedStatusId = "5e26a1f0099b810b946c5d8b";
+      const orderStatusId = orderConfirmedStatusId;
+      await apiServices.putOrder(orderId.value, { orderStatusId });
+    }
 
-      store.dispatch("PUT_CONFIRM_ORDERID_TO_API");
+    const confirmOrder = () => {
+      putConfirmOrderIdToApi();
     };
 
     const closePopUp = () => {

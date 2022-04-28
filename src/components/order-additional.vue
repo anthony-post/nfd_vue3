@@ -69,16 +69,14 @@
         select_blocked: !isSelectedDateRate,
       }"
     >
-      <VCheckbox v-model="checkedTank" label="Полный бак, 500р" value="Да" />
+      <VCheckbox v-model="checkedTank" label="Полный бак, 500р" />
       <VCheckbox
         v-model="checkedBabyChair"
         label="Детское кресло, 200р"
-        value="Да"
       />
       <VCheckbox
         v-model="checkedRightHandDrive"
         label="Правый руль, 1600р"
-        value="Да"
       />
     </div>
   </div>
@@ -135,17 +133,16 @@ export default {
     const checkedTank = computed({
       get: () => selectedTank.value,
       set: (checkedTankCar) => store.commit("SET_SELECTEDTANK", checkedTankCar),
-        // store.dispatch("GET_CHECKEDTANK", checkedTankCar),
     });
 
     const checkedBabyChair = computed({
       get: () => selectedBabyChair.value,
-      set: (checkedBabyChairCar) => store.dispatch("GET_CHECKEDBABYCHAIR", checkedBabyChairCar),
+      set: (checkedBabyChairCar) => store.commit("SET_SELECTEDBABYCHAIR", checkedBabyChairCar),
     });
 
     const checkedRightHandDrive = computed({
       get: () => selectedRightHandDrive.value,
-      set: (checkedRightHandDriveCar) => store.dispatch("GET_CHECKEDRIGHTHANDDRIVE", checkedRightHandDriveCar),
+      set: (checkedRightHandDriveCar) => store.commit("SET_SELECTEDRIGHTHANDDRIVE", checkedRightHandDriveCar),
     });
 
     const isSelectedDateFrom = computed(() => dateStateFrom.value);
