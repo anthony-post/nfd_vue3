@@ -8,7 +8,7 @@
       :value="value"
       @change="$emit('update:checkedValue', $event.target.value)"
     />
-    <span class="checkmark"></span>
+    <span class="checkmark" :class="{ checkmark_notactive: !isChecked }"></span>
   </label>
 </template>
 
@@ -97,6 +97,10 @@ export default {
 
 /* When the radio button is checked */
 .radio__input:checked ~ .checkmark {
-  border: 3px solid $color-text;
+  border: 3px solid $color-green;
+}
+
+.radio__input:checked ~ .checkmark_notactive {
+  border: 1px solid $color-grey;
 }
 </style>

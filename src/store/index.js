@@ -1,8 +1,10 @@
 import { createStore } from "vuex";
 import apiServices from "../services/apiServices";
-import axios from "axios";
 
 const limit = 5; //лимит на количество загруженных авто в область видимости
+const orderNewStatusId = "5e26a191099b810b946c5d89";
+const orderConfirmedStatusId = "5e26a1f0099b810b946c5d8b";
+// orderCanceledStatusId: "5e26a1f5099b810b946c5d8c",
 
 export default createStore({
   state: {
@@ -13,24 +15,24 @@ export default createStore({
     cars: {},
     rateList: [],
     //ORDER
-    popUpConfirm: false,
     orderId: "",
     orderConfirmed: {},
-    orderNewStatusId: "5e26a191099b810b946c5d89",
-    orderConfirmedStatusId: "5e26a1f0099b810b946c5d8b",
-    orderCanceledStatusId: "5e26a1f5099b810b946c5d8c",
     //USER SELECTED
     selectedCity: {},
     selectedPoint: {},
     checkedCategoryCars: "",
     selectedCar: {},
     selectedColor: "",
+    chosenDateFromMs: 0, //выбранная дата в миллисекундах в поле "С"
+    chosenTimeFromMs: 0, //выбранное время в миллисекундах в поле "С"
     selectedDateFrom: "Введите дату и время...", //дата для отображения в инпуте
     selectedTimeFrom: "", //время для отображения в инпуте
+    chosenDateToMs: 0, //выбранная дата в миллисекундах в поле "По" 
+    chosenTimeToMs: 0, //выбранное время в миллисекундах в поле "С"
     selectedDateTo: "Введите дату и время...", //дата для отображения в инпуте
     selectedTimeTo: "", //время для отображения в инпуте
-    dateFrom: 0, //дата в миллисекундах
-    dateTo: 0, //дата в миллисекундах
+    dateFrom: 0, //дата со временем в миллисекундах
+    dateTo: 0, //дата со временем в миллисекундах
     rentalDuration: "", //длительнотсь аренды
     selectedRate: "",
     selectedTank: false,
@@ -138,37 +140,53 @@ export default createStore({
     },
     //DATEFROM
     SET_SELECTEDDATEFROM(state, selectedDateFrom) {
+      state.chosenDateFromMs = selectedDateFrom.value;
+
       state.selectedDateFrom = selectedDateFrom.dateString;
       state.dateFrom = selectedDateFrom.value;
     },
     RESET_SELECTEDDATEFROM(state) {
+      state.chosenDateFromMs = 0;
+
       state.selectedDateFrom = "Введите дату и время...";
       state.dateFrom = 0;
     },
     //TIMEFROM
     SET_SELECTEDTIMEFROM(state, selectedTimeFrom) {
+      state.chosenTimeFromMs = selectedTimeFrom.value;
+
       state.selectedTimeFrom = selectedTimeFrom.dateString;
       state.dateFrom = state.dateFrom + selectedTimeFrom.value;
     },
     RESET_SELECTEDTIMEFROM(state) {
+      state.chosenTimeFromMs = 0;
+
       state.selectedTimeFrom = "";
       state.dateFrom = 0;
     },
     //DATETO
     SET_SELECTEDDATETO(state, selectedDateTo) {
+      state.chosenDateToMs = selectedDateTo.value;
+
       state.selectedDateTo = selectedDateTo.dateString;
       state.dateTo = selectedDateTo.value;
     },
     RESET_SELECTEDDATETO(state) {
+      state.chosenDateToMs = 0;
+
       state.selectedDateTo = "Введите дату и время...";
       state.dateTo = 0;
     },
     //TIMETO
     SET_SELECTEDTIMETO(state, selectedTimeTo) {
+      state.chosenTimeToMs = selectedTimeTo.value;
+
       state.selectedTimeTo = selectedTimeTo.dateString;
       state.dateTo = state.dateTo + selectedTimeTo.value;
     },
     RESET_SELECTEDTIMETO(state) {
+      state.chosenTimeToMs = 0;
+
       state.selectedTimeTo = "";
       state.dateTo = 0;
     },
@@ -228,13 +246,6 @@ export default createStore({
     RESET_PRICESUMMARY(state) {
       state.priceSummary = 0;
     },
-    //POP UP CONFIRM
-    SET_POPUPCONFIRM(state) {
-      state.popUpConfirm = true;
-    },
-    RESET_POPUPCONFIRM(state) {
-      state.popUpConfirm = false;
-    },
   },
   actions: {
     //API
@@ -282,7 +293,6 @@ export default createStore({
         .getRate()
         .then((rateList) => {
           commit("SET_RATE_TO_STATE", rateList);
-          console.log(rateList);
           return rateList;
         })
         .catch((error) => {
@@ -290,90 +300,28 @@ export default createStore({
           return error;
         });
     },
-    //не разобрался как сделать вызов из файла apiServices - POST, PUT, GET запросов с данными заказа,
-    //поэтому сделал так 
-    POST_ORDER_TO_API({ commit }) {
-      // apiServices
-      //   .postOrder()
-      axios("https://api-factory.simbirsoft1.com/api/db/order", {
-        method: "POST",
-        headers: {
-          "X-Api-Factory-Application-Id": "5e25c641099b810b946c5d5b",
-        },
-        data: {
-          orderStatusId: this.state.orderNewStatusId,
-          cityId: this.state.selectedCity.id,
-          pointId: this.state.selectedPoint.id,
-          carId: this.state.selectedCar.id,
-          color: this.state.selectedColor,
-          dateFrom: this.state.dateFrom,
-          dateTo: this.state.dateTo,
-          rateId: this.state.selectedRate,
-          price: this.state.priceSummary,
-          isFullTank: this.state.selectedTank,
-          isNeedChildChair: this.state.selectedBabyChair,
-          isRightWheel: this.state.selectedRightHandDrive,
-        },
-      })
-        .then((order) => {
-          commit("SET_ORDERID_TO_STATE", order);
-          return order;
-        })
-        .catch((error) => {
-          console.log(error);
-          return error;
+    async POST_ORDER_TO_API({ commit, state }) {
+      const order = await apiServices.postOrder({
+          orderStatusId: orderNewStatusId,
+          cityId: state.selectedCity.id,
+          pointId: state.selectedPoint.id,
+          carId: state.selectedCar.id,
+          color: state.selectedColor,
+          dateFrom: state.dateFrom,
+          dateTo: state.dateTo,
+          rateId: state.selectedRate,
+          price: state.priceSummary,
+          isFullTank: state.selectedTank,
+          isNeedChildChair: state.selectedBabyChair,
+          isRightWheel: state.selectedRightHandDrive,
         });
+      commit("SET_ORDERID_TO_STATE", order);
     },
-    PUT_CONFIRM_ORDERID_TO_API() {
-      const mainUrl = "https://api-factory.simbirsoft1.com/api/db/order/";
-      const orderUrl = mainUrl + this.state.orderId;
-      axios(orderUrl, {
-        method: "PUT",
-        headers: {
-          "X-Api-Factory-Application-Id": "5e25c641099b810b946c5d5b",
-        },
-        data: {
-          orderStatusId: this.state.orderConfirmedStatusId,
-        },
-      }).catch((error) => {
-        console.log(error);
-        return error;
-      });
-    },
-    GET_ORDER_FROM_API({ commit }) {
-      const mainUrl = "https://api-factory.simbirsoft1.com/api/db/order/";
-      const orderUrl = mainUrl + this.state.orderId;
-      axios(orderUrl, {
-        method: "GET",
-        headers: {
-          "X-Api-Factory-Application-Id": "5e25c641099b810b946c5d5b",
-        },
-      })
-        .then((orderConfirmed) => {
-          commit("SET_ORDERCONFIRMED_TO_STATE", orderConfirmed);
-          console.log(orderConfirmed);
-          return orderConfirmed;
-        })
-        .catch((error) => {
-          console.log(error);
-          return error;
+    async GET_ORDER_FROM_API({ commit, state }) {
+      const orderConfirmed = await apiServices.getOrder(state.orderId, {
+          orderStatusId: orderConfirmedStatusId,
         });
-    },
-    PUT_CANCEL_ORDERID_TO_API() {
-      const mainUrl = "https://api-factory.simbirsoft1.com/api/db/order/";
-      const orderUrl = mainUrl + this.state.orderId;
-      axios(orderUrl, {
-        method: "PUT",
-        headers: {
-          "X-Api-Factory-Application-Id": "5e25c641099b810b946c5d5b",
-        },
-        data: {
-          orderStatusId: this.state.orderCanceledStatusId,
-        },
-      }).catch((error) => {
-        console.log(error);
-        return error;
-      });
+      commit("SET_ORDERCONFIRMED_TO_STATE", orderConfirmed);
     },
 
     //SELECTED
@@ -480,13 +428,6 @@ export default createStore({
         commit("SET_PRICESUMMARY", pricesummary);
       } else {
         commit("RESET_PRICESUMMARY");
-      }
-    },
-    GET_POPUPCONFIRM({ commit }, popUpIsActive) {
-      if (popUpIsActive) {
-        commit("SET_POPUPCONFIRM", popUpIsActive);
-      } else {
-        commit("RESET_POPUPCONFIRM");
       }
     },
     GET_ORDERID({ commit }, order) {

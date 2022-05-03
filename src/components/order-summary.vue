@@ -5,41 +5,42 @@
       <div class="car-number__wrp">
         <p class="summary__car-number">{{ selectedCar.number }}</p>
       </div>
-      <p class="summary__additional" v-if="selectedTank">
-        Топливо <span class="summary__selected-value">100%</span>
-      </p>
-      <p class="summary__additional" v-if="selectedBabyChair">
-        Детское кресло <span class="summary__selected-value">Да</span>
-      </p>
-      <p class="summary__additional" v-if="selectedRightHandDrive">
-        Правый руль <span class="summary__selected-value">Да</span>
-      </p>
-      <p class="summary__additional">
-        Доступна с
-        <span class="summary__selected-value">
-          {{ selectedDateFrom }} {{ selectedTimeFrom }}
-        </span>
-      </p>
+      <dl v-if="selectedTank" class="summary__additional">
+        <dt class="summary__additional-title">Топливо</dt>
+        <dd class="summary__selected-value">100&percnt;</dd>
+      </dl>
+      <dl v-if="selectedBabyChair" class="summary__additional">
+        <dt class="summary__additional-title">Детское кресло</dt>
+        <dd class="summary__selected-value">Да</dd>
+      </dl>
+      <dl v-if="selectedRightHandDrive" class="summary__additional">
+        <dt class="summary__additional-title">Правый руль</dt>
+        <dd class="summary__selected-value">Да</dd>
+      </dl>
+      <dl class="summary__additional">
+        <dt class="summary__additional-title">Доступна с</dt>
+        <dd class="summary__selected-value">{{ selectedDateFrom }} {{ selectedTimeFrom }}</dd>
+      </dl>
     </div>
-    <img
+    <!-- <img
       class="car__img"
       :src="selectedCar?.thumbnail?.path"
       :alt="selectedCar?.thumbnail?.originalname"
+    /> -->
+    <img
+      class="car__img"
+      :src="carImg.path"
+      :alt="carImg.originalname"
     />
-    <popUp v-if="popUpConfirm" />
   </div>
 </template>
 
 <script>
 import { useStore } from "vuex";
 import { computed } from "vue";
-import PopUp from "@/components/pop-up.vue";
 
 export default {
   name: "order-summary",
-  components: {
-    PopUp,
-  },
   setup() {
     const store = useStore();
 
@@ -51,10 +52,10 @@ export default {
     const selectedRate = computed(() => store.state.selectedRate);
     const selectedTank = computed(() => store.state.selectedTank);
     const selectedBabyChair = computed(() => store.state.selectedBabyChair);
-    const selectedRightHandDrive = computed(
-      () => store.state.selectedRightHandDrive
-    );
-    const popUpConfirm = computed(() => store.state.popUpConfirm);
+    const selectedRightHandDrive = computed(() => store.state.selectedRightHandDrive);
+    const carImg = computed(() => {
+      return Object.keys(selectedCar.value.thumbnail).length !== 0 ? selectedCar.value.thumbnail : {};
+    });
 
     return {
       selectedCar,
@@ -65,8 +66,8 @@ export default {
       selectedTank,
       selectedBabyChair,
       selectedRightHandDrive,
-      popUpConfirm,
-    };
+      carImg,
+    }
   },
 };
 </script>
@@ -124,10 +125,16 @@ export default {
   font-size: 14px;
   line-height: 16px;
   color: $color;
+  display: flex;
+}
+
+.summary__additional-title {
+  padding: 0 5px 0 0;
 }
 
 .summary__selected-value {
   font-weight: 300;
+  margin: 0;
 }
 
 .car__img {

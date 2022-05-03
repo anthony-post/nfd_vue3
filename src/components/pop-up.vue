@@ -1,27 +1,27 @@
 <template>
   <transition name="modal">
     <div class="modal-mask">
-      <div class="modal-wrapper">
         <div class="modal-container">
-          <div class="modal-body">Подтвердить заказ</div>
+          <p class="modal-body">
+            Подтвердить заказ
+          </p>
           <div class="modal-footer">
-            <router-link
-              v-if="orderId"
-              :to="{ name: 'v-orderid', params: { id: orderId } }"
-            >
-              <button class="modal-button" @click="confirmOrder">
-                Подтвердить
+              <router-link
+                v-if="orderId"
+                :to="{ name: 'v-orderid', params: { id: orderId } }"
+              >
+                <button class="modal-button" @click="confirmOrder">
+                  Подтвердить
+                </button>
+              </router-link>
+              <button
+                class="modal-button modal-button_colored"
+                @click="closePopUp"
+              >
+                Вернуться
               </button>
-            </router-link>
-            <button
-              class="modal-button modal-button_colored"
-              @click="closePopUp"
-            >
-              Вернуться
-            </button>
           </div>
         </div>
-      </div>
     </div>
   </transition>
 </template>
@@ -29,30 +29,40 @@
 <script>
 import { useStore } from "vuex";
 import { computed } from "vue";
+import apiServices from "../services/apiServices";
 
 export default {
   name: "popup",
-  setup() {
-    //const
+  setup(_, context) {
     const store = useStore();
 
     //computed
     const orderId = computed(() => store.state.orderId);
 
     //methods
+    const putConfirmOrderIdToApi = async () => {
+      const orderConfirmedStatusId = "5e26a1f0099b810b946c5d8b";
+      const orderStatusId = orderConfirmedStatusId;
+      try {
+        await apiServices.putOrder(orderId.value, { orderStatusId });
+      } catch (error) {
+        alert("Что-то пошло не так :-)" + " " + error);
+      }
+    }
+
     const confirmOrder = () => {
-      store.dispatch("PUT_CONFIRM_ORDERID_TO_API");
+      putConfirmOrderIdToApi();
     };
 
     const closePopUp = () => {
-      store.dispatch("GET_POPUPCONFIRM");
+      context.emit("close-popup");
     };
 
     return {
       orderId,
       confirmOrder,
       closePopUp,
-    };
+    }
   },
 };
 </script>
@@ -71,14 +81,11 @@ export default {
   transition: opacity 0.3s ease;
 }
 
-.modal-wrapper {
+.modal-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
   height: 100%;
-}
-
-.modal-container {
   margin: 0 auto;
   transition: all 0.3s ease;
 }

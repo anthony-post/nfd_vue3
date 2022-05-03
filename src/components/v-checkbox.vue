@@ -5,7 +5,6 @@
       class="checkbox__input"
       type="checkbox"
       :checked="isChecked"
-      :value="value"
       @change="updateInput"
     />
     <span class="checkmark-box"></span>
@@ -17,8 +16,7 @@ import { computed } from "vue";
 
 export default {
   props: {
-    value: { type: String },
-    modelValue: { type: String, default: "" },
+    modelValue: null,
     label: { type: String, required: true },
     trueValue: { default: true },
     falseValue: { default: false },
