@@ -122,27 +122,27 @@ export default {
 
     const checkedColor = computed({
       get: () => selectedColor.value,
-      set: (checkedColorCar) => store.dispatch("GET_CHECKEDCOLOR", checkedColorCar),
+      set: checkedColorCar => store.dispatch("GET_CHECKEDCOLOR", checkedColorCar),
     });
 
     const checkedRate = computed({
       get: () => selectedRate.value,
-      set: (checkedRateCar) => store.dispatch("GET_CHECKEDRATE", checkedRateCar),
+      set: checkedRateCar => store.dispatch("GET_CHECKEDRATE", checkedRateCar),
     });
 
     const checkedTank = computed({
       get: () => selectedTank.value,
-      set: (checkedTankCar) => store.commit("SET_SELECTEDTANK", checkedTankCar),
+      set: checkedTankCar => store.commit("SET_SELECTEDTANK", checkedTankCar),
     });
 
     const checkedBabyChair = computed({
       get: () => selectedBabyChair.value,
-      set: (checkedBabyChairCar) => store.commit("SET_SELECTEDBABYCHAIR", checkedBabyChairCar),
+      set: checkedBabyChairCar => store.commit("SET_SELECTEDBABYCHAIR", checkedBabyChairCar),
     });
 
     const checkedRightHandDrive = computed({
       get: () => selectedRightHandDrive.value,
-      set: (checkedRightHandDriveCar) => store.commit("SET_SELECTEDRIGHTHANDDRIVE", checkedRightHandDriveCar),
+      set: checkedRightHandDriveCar => store.commit("SET_SELECTEDRIGHTHANDDRIVE", checkedRightHandDriveCar),
     });
 
     const isSelectedDateFrom = computed(() => dateStateFrom.value);
@@ -164,8 +164,8 @@ export default {
       dateObj.setHours(0, 0, 0);
       for (let i = 0; i <= 90; i++) {
         dateObj.setDate(dateObj.getDate() + 1);
-        let newDate = formatedDate(dateObj);
-        let newObjDate = {
+        const newDate = formatedDate(dateObj);
+        const newObjDate = {
           id: i,
           value: dateObj.getTime(),
           dateString: newDate,
@@ -203,9 +203,9 @@ export default {
         "23:00",
       ];
       for (let j = 0; j < time.length; j++) {
-        let time_parts = time[j].split(":");
-        let millisecond = time_parts[0] * (60000 * 60) + time_parts[1] * 60000;
-        let newObjTime = { id: j, value: millisecond, dateString: time[j] };
+        const time_parts = time[j].split(":");
+        const millisecond = time_parts[0] * (60000 * 60) + time_parts[1] * 60000;
+        const newObjTime = { id: j, value: millisecond, dateString: time[j] };
         arrayTime.value.push(newObjTime); //запись в массив время для выбора во втором селекте
       }
     };

@@ -22,10 +22,15 @@
         <dd class="summary__selected-value">{{ selectedDateFrom }} {{ selectedTimeFrom }}</dd>
       </dl>
     </div>
-    <img
+    <!-- <img
       class="car__img"
       :src="selectedCar?.thumbnail?.path"
       :alt="selectedCar?.thumbnail?.originalname"
+    /> -->
+    <img
+      class="car__img"
+      :src="carImg.path"
+      :alt="carImg.originalname"
     />
   </div>
 </template>
@@ -48,6 +53,9 @@ export default {
     const selectedTank = computed(() => store.state.selectedTank);
     const selectedBabyChair = computed(() => store.state.selectedBabyChair);
     const selectedRightHandDrive = computed(() => store.state.selectedRightHandDrive);
+    const carImg = computed(() => {
+      return Object.keys(selectedCar.value.thumbnail).length !== 0 ? selectedCar.value.thumbnail : {};
+    });
 
     return {
       selectedCar,
@@ -58,6 +66,7 @@ export default {
       selectedTank,
       selectedBabyChair,
       selectedRightHandDrive,
+      carImg,
     }
   },
 };

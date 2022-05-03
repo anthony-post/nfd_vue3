@@ -27,11 +27,10 @@
             :class="{ item_blocked: option.value < chosenDateFromMs }"
             @click="selectDate(option)"
           >
-            <!--обработчик клика по опции из списка-->
             {{ option.dateString }}
           </p>
         </div>
-        <div
+        <!-- <div
           class="select__options-list"
           :class="{ list_blocked: selectedDate === 'Введите дату и время...' }"
         >
@@ -42,7 +41,20 @@
             :class="{ item_blocked: chosenDateFromMs === chosenDateToMs && option.value <= chosenTimeFromMs }"
             @click="selectTime(option)"
           >
-            <!--обработчик клика по опции из списка-->
+            {{ option.dateString }}
+          </p>
+        </div> -->
+        <div
+          class="select__options-list"
+          :class="{ list_blocked: selectedDate === 'Введите дату и время...' }"
+        >
+          <p
+            class="select__options-item select__text"
+            v-for="option in optionsTime"
+            :key="option.id"
+            :class="{ item_blocked: isItemBlocked(option) }"
+            @click="selectTime(option)"
+          >
             {{ option.dateString }}
           </p>
         </div>
@@ -119,6 +131,11 @@ export default {
         areOptionsVisible.value = false;
       }
     };
+
+    const isItemBlocked = option => {
+      return chosenDateFromMs.value === chosenDateToMs.value && option.value <= chosenTimeFromMs.value;
+    };
+
     return {
       areOptionsVisible,
       chosenDateFromMs,
@@ -128,6 +145,7 @@ export default {
       selectDate,
       selectTime,
       resetOption,
+      isItemBlocked,
     };
   },
 };

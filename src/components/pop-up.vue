@@ -3,7 +3,7 @@
     <div class="modal-mask">
         <div class="modal-container">
           <p class="modal-body">
-          Подтвердить заказ
+            Подтвердить заказ
           </p>
           <div class="modal-footer">
               <router-link
@@ -43,7 +43,11 @@ export default {
     const putConfirmOrderIdToApi = async () => {
       const orderConfirmedStatusId = "5e26a1f0099b810b946c5d8b";
       const orderStatusId = orderConfirmedStatusId;
-      await apiServices.putOrder(orderId.value, { orderStatusId });
+      try {
+        await apiServices.putOrder(orderId.value, { orderStatusId });
+      } catch (error) {
+        alert("Что-то пошло не так :-)" + " " + error);
+      }
     }
 
     const confirmOrder = () => {
