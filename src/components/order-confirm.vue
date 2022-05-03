@@ -3,9 +3,10 @@
     <Vheader class="order-center" />
     <div class="tabs">
       <div class="tabs__border">
-        <ul class="tab-list order-center">
-          <li class="tab__item">Заказ номер {{ orderId }}</li>
-        </ul>
+        <dl class="tab-list">
+          <dt class="tab__item">Заказ номер</dt>
+          <dd class="tab__item">{{ orderId }}</dd>
+        </dl>
       </div>
       <div class="order">
         <div class="order__window">
@@ -13,39 +14,36 @@
           <!--Order-->
           <div class="summary__wrp">
             <div>
-              <p class="summary__car-name" v-if="orderConfirmed?.carId">
+              <p v-if="orderConfirmed?.carId" class="summary__car-name">
                 {{ orderConfirmed.carId.name }}
               </p>
               <div class="car-number__wrp">
-                <p class="summary__car-number" v-if="orderConfirmed?.carId">
+                <p v-if="orderConfirmed?.carId" class="summary__car-number">
                   {{ orderConfirmed.carId.number }}
                 </p>
               </div>
-              <p class="summary__additional" v-if="orderConfirmed?.isFullTank">
-                Топливо <span class="summary__selected-value">100%</span>
-              </p>
-              <p
-                class="summary__additional"
-                v-if="orderConfirmed?.isNeedChildChair"
-              >
-                Детское кресло <span class="summary__selected-value">Да</span>
-              </p>
-              <p
-                class="summary__additional"
-                v-if="orderConfirmed?.isRightWheel"
-              >
-                Правый руль <span class="summary__selected-value">Да</span>
-              </p>
-              <p class="summary__additional">
-                Доступна с
-                <span class="summary__selected-value">{{ convertToDate }}</span>
-              </p>
+              <dl v-if="orderConfirmed?.isFullTank" class="summary__additional">
+                <dt class="summary__additional-title">Топливо</dt>
+                <dd class="summary__selected-value">100&percnt;</dd>
+              </dl>
+              <dl v-if="orderConfirmed?.isNeedChildChair" class="summary__additional">
+                <dt class="summary__additional-title">Детское кресло</dt>
+                <dd class="summary__selected-value">Да</dd>
+              </dl>
+              <dl v-if="orderConfirmed?.isRightWheel" class="summary__additional">
+                <dt class="summary__additional-title">Правый руль</dt>
+                <dd class="summary__selected-value">Да</dd>
+              </dl>
+              <dl class="summary__additional">
+                <dt class="summary__additional-title">Доступна с</dt>
+                <dd class="summary__selected-value">{{ convertToDate }}</dd>
+              </dl>
             </div>
             <img
-              class="car__img"
               v-if="orderConfirmed?.carId"
-              :src="orderConfirmed?.carId?.thumbnail?.path"
-              :alt="orderConfirmed?.carId?.thumbnail?.originalname"
+              :src="carPic.path"
+              :alt="carPic.originalname"
+              class="car__img"
             />
           </div>
         </div>
@@ -70,8 +68,8 @@
             </li>
             <li v-if="rentalDuration">
               <span class="item__title">Длительность аренд</span>
-              <span class="item__value" v-if="rentalDuration.days">{{ rentalDuration.days }}д</span>
-              <span class="item__value" v-if="rentalDuration.hours">{{ rentalDuration.hours }}ч</span>
+              <span v-if="rentalDuration.days" class="item__value">{{ rentalDuration.days }}д</span>
+              <span v-if="rentalDuration.hours" class="item__value">{{ rentalDuration.hours }}ч</span>
             </li>
             <li v-if="orderConfirmed?.rateId">
               <span class="item__title">Тариф</span>
@@ -98,8 +96,8 @@
           <!--Кнопка Отменить-->
           <router-link :to="{ name: 'v-order' }">
             <button
-              class="total__button total__button_active button-colored"
               @click="cancelOrder"
+              class="total__button total__button_active button-colored"
             >
               Отменить
             </button>
@@ -114,6 +112,7 @@
 import { useStore } from "vuex";
 import { computed } from "vue";
 import Vheader from "@/components/v-header.vue";
+import apiServices from "../services/apiServices";
 
 export default {
   name: "order-confirm",
@@ -150,10 +149,21 @@ export default {
       return dd + "." + mm + "." + yy + " " + hh + ":" + min;
     });
 
+    const carPic = computed(() => {
+      return Object.keys(orderConfirmed.value.carId.thumbnail).length !== 0 ? orderConfirmed.value.carId.thumbnail : {};
+    });
+
     //methods
     const getOrderFromApi = () => store.dispatch("GET_ORDER_FROM_API");
-    const putCancelOrderToApi = () =>
-      store.dispatch("PUT_CANCEL_ORDERID_TO_API");
+    const putCancelOrderToApi = async () => {
+      const orderCanceledStatusId = "5e26a1f5099b810b946c5d8c";
+      const orderStatusId = orderCanceledStatusId;
+      try {
+        await apiServices.putOrder(orderId.value, { orderStatusId });
+      } catch (error) {
+        alert("Что-то пошло не так :-)" + " " + error);
+      }
+    };
 
     const cancelOrder = () => {
       putCancelOrderToApi();
@@ -185,6 +195,7 @@ export default {
       rentalDuration,
       orderConfirmed,
       convertToDate,
+      carPic,
       getOrderFromApi,
       putCancelOrderToApi,
       cancelOrder,
@@ -233,6 +244,7 @@ export default {
   line-height: 16px;
   color: $color-black;
   padding: 8px 0;
+  margin: 0 10px 0 0;
 }
 
 .tab__item-icon {
@@ -331,6 +343,10 @@ export default {
   font-size: 14px;
   line-height: 16px;
   color: $color-black;
+}
+
+.summary__additional-title {
+  padding: 0 5px 0 0;
 }
 
 .summary__selected-value {

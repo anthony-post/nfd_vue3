@@ -22,11 +22,6 @@
         <dd class="summary__selected-value">{{ selectedDateFrom }} {{ selectedTimeFrom }}</dd>
       </dl>
     </div>
-    <!-- <img
-      class="car__img"
-      :src="selectedCar?.thumbnail?.path"
-      :alt="selectedCar?.thumbnail?.originalname"
-    /> -->
     <img
       class="car__img"
       :src="carImg.path"
