@@ -268,7 +268,7 @@ export default {
 @import "@/assets/variables.scss";
 
 .input-block {
-  width: 320px;
+  width: 330px;
   display: flex;
   flex-direction: column;
   align-items: flex-end;

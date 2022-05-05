@@ -166,19 +166,19 @@ export default {
 
 .order__window {
   flex-basis: 70%;
-  padding: 32px 150px 0 64px;
+  padding: 32px 0 0 64px;
 
   @media #{$media} and (min-width: $desktop-min) and (max-width: $desktop-max) {
-    padding: 32px 32px 0 32px;
+    padding: 32px 0 0 32px;
   }
 
   @media #{$media} and (min-width: $tablet-min) and (max-width: $tablet-max) {
-    padding: 32px 32px 0 64px;
+    padding: 32px 0 0 64px;
   }
 
   @media #{$media} and (min-width: $mobile-min) and (max-width: $mobile-max) {
     flex-basis: 100%;
-    padding: 16px 16px 0 16px;
+    padding: 16px 0 0 16px;
   }
 }
 </style>

@@ -387,7 +387,7 @@ export default {
 
 .additional-wrp {
   @media #{$media} and (min-width: $mobile-min) and (max-width: $mobile-max) {
-    overflow: scroll;
+    overflow-y: scroll;
     height: 40vh;
   }
 }
