@@ -53,52 +53,32 @@
         от {{ selectedCar.priceMin }} до {{ selectedCar.priceMax }} &#8381;
       </span>
     </p>
-    <!--Кнопка Выбрать модель-->
-    <button
-      class="total__button"
-      v-if="selectedTab === 'order-place'"
-      :class="{ total__button_active: orderPlaceFilledUp }"
-      :disabled="!orderPlaceFilledUp"
-      @click="changeSelectedTabModel"
-    >
-      Выбрать модель
-    </button>
-    <!--Кнопка Дополнительно-->
-    <button
-      class="total__button"
-      v-if="selectedTab === 'order-model'"
-      :class="{ total__button_active: orderModelFilledUp }"
-      :disabled="!orderModelFilledUp"
-      @click="changeSelectedTabAdditional"
-    >
-      Дополнительно
-    </button>
-    <!--Кнопка Итого-->
-    <button
-      class="total__button"
-      v-if="selectedTab === 'order-additional'"
-      :class="{ total__button_active: orderAdditionalFilledUp }"
-      :disabled="!orderAdditionalFilledUp"
-      @click="changeSelectedTabSummary"
-    >
-      Итого
-    </button>
-    <!--Кнопка Заказать-->
-    <button
-      class="total__button total__button_active"
-      v-if="selectedTab === 'order-summary'"
-    >
-      Заказать
-    </button>
+    <!--Кнопки-->
+    <div v-for="button in buttons" :key="button.id">
+      <button
+        v-if="selectedTab === button.id"
+        :class="{ total__button_active: !isButtonDisabled(button) }"
+        :disabled="isButtonDisabled(button)"
+        @click="buttonAction(button)"
+        class="total__button"
+      >
+        {{ button.name }}
+      </button>
+    </div>
+    <PopUp v-if="!popUpIsActive" @close-popup="closePopUp" />
   </div>
 </template>
 
 <script>
-import { computed } from "vue";
+import { ref, computed } from "vue";
 import { useStore } from "vuex";
+import PopUp from "@/components/pop-up.vue";
 
 export default {
   name: "v-total",
+  components: {
+    PopUp,
+  },
   props: {
     tabs: {
       type: Array,
@@ -115,6 +95,13 @@ export default {
   },
   setup(props, context) {
     const store = useStore();
+
+    const buttons = [
+      { id: "order-place", name: "Выбрать модель" },
+      { id: "order-model", name: "Дополнительно" },
+      { id: "order-additional", name: "Итого" },
+      { id: "order-summary", name: "Заказать" },
+    ];
 
     //computed
     const selectedCity = computed(() => store.state.selectedCity);
@@ -134,86 +121,50 @@ export default {
 
     //поиск выбранного id тарифа в массиве и получение его наименования
     const getNameRate = computed(() => {
-      let nameRate = "";
-      rateList.value.filter(item => {
-         if(item.id === selectedRate.value) {
-           nameRate = item.rateTypeId.name;
-         } 
-      });
-      return nameRate;
-    }, '');
+      return rateList.value.reduce((accumulator, rate) => {
+        if(rate.id === selectedRate.value) {
+          accumulator = rate.rateTypeId.name;
+        }
+        return accumulator;
+      }, '');
+    });
 
     //подсчет итоговой суммы заказа
     const getPriceSummary = computed(() => {
-      const rateMinuteId = "62593c9d73b61100181028ed";
       const rateDayId = "62593cac73b61100181028ee";
       const rateWeekId = "62593cca73b61100181028ef";
-      const rateWeekSaleId = "62593cd573b61100181028f0";
       const rateMonthId = "6259003d73b61100181028d9";
-      const rateQuarterId = "62593cf073b61100181028f1";
+      const rateQuarterSaleId = "62593cf073b61100181028f1";
+      const rateQuarterId = "626ac00373b611001810412b";
       const rateYearId = "62593d0273b61100181028f2";
       const priceTank = 500;
       const priceBabyChair = 200;
       const priceRightHandDrive = 1600;
-
-      let priceCalculated;
+      const day = 1;
+      const week = 7;
+      const month = 30;
+      const qourter = 90;
+      const quorterSale = 93;
+      const year = 365;
+      const dayMs = 86400000;
       const duration = dateStateTo.value - dateStateFrom.value;
+      let priceCalculated;
 
       rateList.value.forEach((rate) => {
-        //monthly rate
-        if (
-          selectedRate.value === rate.id &&
-          selectedRate.value === rateMonthId
-        ) {
-          const rateMonthPrice = rate.price / (30 * 86400000);
-          if (duration === 30 * 86400000) {
-            priceCalculated = Math.round(duration * rateMonthPrice);
-          } else {
-            alert(
-              "Выберите, пожалуйста, другой тариф или укажите другой диапазон времени"
-            );
-          }
-          priceCalculated = calcAddService(
-            priceCalculated,
-            priceTank,
-            priceBabyChair,
-            priceRightHandDrive
-          );
-        }
 
-        //minute rate
-        if (
-          selectedRate.value === rate.id &&
-          selectedRate.value === rateMinuteId
-        ) {
-          const rateMinutePrice = rate.price / 60000;
-          if (duration > 60000 && duration < 1 * 86400000) {
-            priceCalculated = Math.round(duration * rateMinutePrice);
-          } else {
-            alert(
-              "Выберите, пожалуйста, другой тариф или укажите другой диапазон времени"
-            );
-          }
-          priceCalculated = calcAddService(
-            priceCalculated,
-            priceTank,
-            priceBabyChair,
-            priceRightHandDrive
-          );
-        }
-
-        //dayly rate
+        //day rate
         if (
           selectedRate.value === rate.id &&
           selectedRate.value === rateDayId
         ) {
-          const rateDayPrice = rate.price / 86400000;
-          if (duration >= 86400000 && duration < 7 * 86400000) {
-            priceCalculated = Math.round(duration * rateDayPrice);
-          } else {
-            alert(
-              "Выберите, пожалуйста, другой тариф или укажите другой диапазон времени"
+          if (duration >= dayMs && duration < week * dayMs) {
+            priceCalculated = calcPrice(
+              rate.price,
+              day,
+              duration
             );
+          } else {
+            resetRateAndAdditional();
           }
           priceCalculated = calcAddService(
             priceCalculated,
@@ -223,18 +174,19 @@ export default {
           );
         }
 
-        //weekly rate
+        //week rate
         if (
           selectedRate.value === rate.id &&
           selectedRate.value === rateWeekId
         ) {
-          const rateWeekPrice = rate.price / (7 * 86400000);
-          if (duration === 7 * 86400000) {
-            priceCalculated = Math.round(duration * rateWeekPrice);
-          } else {
-            alert(
-              "Выберите, пожалуйста, другой тариф или укажите другой диапазон времени"
+          if (duration === week * dayMs) {
+            priceCalculated = calcPrice(
+              rate.price,
+              week,
+              duration
             );
+          } else {
+            resetRateAndAdditional();
           }
           priceCalculated = calcAddService(
             priceCalculated,
@@ -244,18 +196,19 @@ export default {
           );
         }
 
-        //weekly rate sale
+        //month rate
         if (
           selectedRate.value === rate.id &&
-          selectedRate.value === rateWeekSaleId
+          selectedRate.value === rateMonthId
         ) {
-          const rateWeekSalePrice = rate.price / (7 * 86400000);
-          if (duration === 7 * 86400000) {
-            priceCalculated = Math.round(duration * rateWeekSalePrice);
-          } else {
-            alert(
-              "Выберите, пожалуйста, другой тариф или укажите другой диапазон времени"
+          if (duration === month * dayMs) {
+            priceCalculated = calcPrice(
+              rate.price,
+              month,
+              duration
             );
+          } else {
+            resetRateAndAdditional();
           }
           priceCalculated = calcAddService(
             priceCalculated,
@@ -270,13 +223,36 @@ export default {
           selectedRate.value === rate.id &&
           selectedRate.value === rateQuarterId
         ) {
-          const rateQuarterPrice = rate.price / (90 * 86400000);
-          if (duration === 90 * 86400000) {
-            priceCalculated = Math.round(duration * rateQuarterPrice);
-          } else {
-            alert(
-              "Выберите, пожалуйста, другой тариф или укажите другой диапазон времени"
+          if (duration === qourter * dayMs) {
+            priceCalculated = calcPrice(
+              rate.price,
+              qourter,
+              duration
             );
+          } else {
+            resetRateAndAdditional();
+          }
+          priceCalculated = calcAddService(
+            priceCalculated,
+            priceTank,
+            priceBabyChair,
+            priceRightHandDrive
+          );
+        }
+
+        //3 months sale rate
+        if (
+          selectedRate.value === rate.id &&
+          selectedRate.value === rateQuarterSaleId
+        ) {
+          if (duration === quorterSale * dayMs) {
+            priceCalculated = calcPrice(
+              rate.price,
+              qourter,
+              duration
+            );
+          } else {
+            resetRateAndAdditional();
           }
           priceCalculated = calcAddService(
             priceCalculated,
@@ -291,13 +267,14 @@ export default {
           selectedRate.value === rate.id &&
           selectedRate.value === rateYearId
         ) {
-          const rateYearPrice = rate.price / (365 * 86400000);
-          if (duration === 365 * 86400000) {
-            priceCalculated = Math.round(duration * rateYearPrice);
-          } else {
-            alert(
-              "Выберите, пожалуйста, другой тариф или укажите другой диапазон времени"
+          if (duration === year * dayMs) {
+            priceCalculated = calcPrice(
+              rate.price,
+              year,
+              duration
             );
+          } else {
+            resetRateAndAdditional();
           }
           priceCalculated = calcAddService(
             priceCalculated,
@@ -312,20 +289,18 @@ export default {
       return priceCalculated;
     });
 
-    const orderPlaceFilledUp = computed(() => {
-      return (
+    const orderPlaceFilledUp = computed(() => 
         Object.keys(selectedCity.value).length &&
         Object.keys(selectedPoint.value).length !== 0
-      )
-    });
+    );
 
-    const orderModelFilledUp = computed(() => {
-      return Object.keys(selectedCar.value).length !== 0
-    });
+    const orderModelFilledUp = computed(() => 
+      Object.keys(selectedCar.value).length !== 0
+    );
 
-    const orderAdditionalFilledUp = computed(() => {
-      return (dateStateFrom.value && dateStateTo.value && selectedRate.value)
-    });
+    const orderAdditionalFilledUp = computed(() => 
+      dateStateFrom.value && dateStateTo.value && selectedRate.value
+    );
 
     //methods
     const changeSelectedTabModel = () => {
@@ -361,7 +336,66 @@ export default {
       return priceCalculated;
     };
 
+    const calcPrice = (ratePrice, durationDays, durationMs) => {
+      const durationPrice = ratePrice / (durationDays * 86400000);
+      const priceSummary = Math.round(durationMs * durationPrice);
+      return priceSummary;
+    };
+
+    const resetRateAndAdditional = () => {
+      store.dispatch("GET_CHECKEDRATE");
+      store.dispatch("GET_CHECKEDTANK");
+      store.dispatch("GET_CHECKEDBABYCHAIR");
+      store.dispatch("GET_CHECKEDRIGHTHANDDRIVE");
+      alert(
+        "Выберите, пожалуйста, другой тариф или укажите другой диапазон времени"
+      );
+    };
+
+    const isButtonDisabled = button => {
+      if(button.id === props.tabs[0].id) {
+        return !orderPlaceFilledUp.value;
+      }
+
+      if(button.id === props.tabs[1].id) {
+        return !orderModelFilledUp.value;
+      }
+
+      if(button.id === props.tabs[2].id) {
+        return !orderAdditionalFilledUp.value;
+      }
+    };
+
+    const buttonAction = button => {
+      if(button.id === props.tabs[0].id) {
+        changeSelectedTabModel();
+      }
+
+      if(button.id === props.tabs[1].id) {
+        changeSelectedTabAdditional();
+      }
+
+      if(button.id === props.tabs[2].id) {
+        changeSelectedTabSummary();
+      }
+
+      if(button.id === props.tabs[3].id) {
+        showPopUp();
+      }
+    };
+
+    //pop-up
+    const popUpIsActive = ref(true);
+    const showPopUp = () => {
+      popUpIsActive.value = !popUpIsActive.value;
+      store.dispatch("POST_ORDER_TO_API");
+    };
+    const closePopUp = () => {
+      popUpIsActive.value = !popUpIsActive.value;
+    };
+
     return {
+      buttons,
       selectedCity,
       selectedPoint,
       selectedCar,
@@ -383,6 +417,13 @@ export default {
       changeSelectedTabAdditional,
       changeSelectedTabSummary,
       calcAddService,
+      calcPrice,
+      resetRateAndAdditional,
+      popUpIsActive,
+      showPopUp,
+      closePopUp,
+      isButtonDisabled,
+      buttonAction,
     };
   },
 };

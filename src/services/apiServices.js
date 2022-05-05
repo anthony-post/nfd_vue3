@@ -6,6 +6,7 @@ const url = {
   CATEGORY: "/db/category",
   CAR: "/db/car",
   RATE: "/db/rate",
+  ORDER: "db/order",
 };
 
 export default {
@@ -25,5 +26,20 @@ export default {
   },
   getRate() {
     return axiosConfig.get(url.RATE);
+  },
+  postOrder(data = {}) {
+    return axiosConfig.post(url.ORDER, {
+      ...data,
+    });
+  },
+  putOrder(idOrder, data = {}) {
+    return axiosConfig.put(url.ORDER + '/' + idOrder, {
+      ...data,
+    });
+  },
+  getOrder(idOrder, data = {}) {
+    return axiosConfig.get(url.ORDER + '/' + idOrder, {
+      ...data,
+    });
   },
 };

@@ -60,12 +60,12 @@ export default {
   border-bottom: 1px solid $color-grey-light;
 
   @media #{$media} and (min-width: $mobile-min) and (max-width: $mobile-max) {
-    //фиксируем табы при общем скроле страницы
-    position: sticky;
-    top: 98px;
-    background-color: $color-white;
-    z-index: 10;
-  }
+     //фиксируем табы при общем скроле страницы
+     position: sticky;
+     top: 98px;
+     background-color: $color-white;
+     z-index: 10;
+   }
 }
 
 .tab-list {

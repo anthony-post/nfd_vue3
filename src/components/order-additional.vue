@@ -31,7 +31,7 @@
       </p>
       <p>
         <VSelectDouble
-          :class="{ select_blocked: isSelectedDateFrom }"
+          :class="{ select_blocked: !isSelectedDateFrom }"
           :optionsDate="arrayDate"
           :optionsTime="arrayTime"
           @selectDate="setSelectedDateTo"
@@ -46,7 +46,7 @@
     <p class="additional__text">Тариф</p>
     <div
       class="tarif-wrp"
-      :class="{ select_blocked: isSelectedDateFromTo }"
+      :class="{ select_blocked: !isSelectedDateFromTo }"
     >
       <VRadio
         v-model:checkedValue="checkedRate"
@@ -66,19 +66,17 @@
     <div
       class="services-wrp"
       :class="{
-        select_blocked: isSelectedDateRate,
+        select_blocked: !isSelectedDateRate,
       }"
     >
-      <VCheckbox v-model="checkedTank" label="Полный бак, 500р" value="Да" />
+      <VCheckbox v-model="checkedTank" label="Полный бак, 500р" />
       <VCheckbox
         v-model="checkedBabyChair"
         label="Детское кресло, 200р"
-        value="Да"
       />
       <VCheckbox
         v-model="checkedRightHandDrive"
         label="Правый руль, 1600р"
-        value="Да"
       />
     </div>
   </div>
@@ -102,7 +100,6 @@ export default {
     const store = useStore();
 
     //ref
-    const arrayDateFrom = ref([]);
     const arrayDate = ref([]);
     const arrayTime = ref([]);
 
@@ -124,61 +121,33 @@ export default {
     );
 
     const checkedColor = computed({
-      get: () => {
-        return selectedColor.value;
-      },
-      set: (checkedColorCar) => {
-        store.dispatch("GET_CHECKEDCOLOR", checkedColorCar);
-      },
+      get: () => selectedColor.value,
+      set: checkedColorCar => store.dispatch("GET_CHECKEDCOLOR", checkedColorCar),
     });
 
     const checkedRate = computed({
-      get: () => {
-        return selectedRate.value;
-      },
-      set: (checkedRateCar) => {
-        store.dispatch("GET_CHECKEDRATE", checkedRateCar);
-      },
+      get: () => selectedRate.value,
+      set: checkedRateCar => store.dispatch("GET_CHECKEDRATE", checkedRateCar),
     });
 
     const checkedTank = computed({
-      get: () => {
-        return selectedTank.value;
-      },
-      set: (checkedTankCar) => {
-        store.dispatch("GET_CHECKEDTANK", checkedTankCar);
-      },
+      get: () => selectedTank.value,
+      set: checkedTankCar => store.commit("SET_SELECTEDTANK", checkedTankCar),
     });
 
     const checkedBabyChair = computed({
-      get: () => {
-        return selectedBabyChair.value;
-      },
-      set: (checkedBabyChairCar) => {
-        store.dispatch("GET_CHECKEDBABYCHAIR", checkedBabyChairCar);
-      },
+      get: () => selectedBabyChair.value,
+      set: checkedBabyChairCar => store.commit("SET_SELECTEDBABYCHAIR", checkedBabyChairCar),
     });
 
     const checkedRightHandDrive = computed({
-      get: () => {
-        return selectedRightHandDrive.value;
-      },
-      set: (checkedRightHandDriveCar) => {
-        store.dispatch("GET_CHECKEDRIGHTHANDDRIVE", checkedRightHandDriveCar);
-      },
+      get: () => selectedRightHandDrive.value,
+      set: checkedRightHandDriveCar => store.commit("SET_SELECTEDRIGHTHANDDRIVE", checkedRightHandDriveCar),
     });
 
-    const isSelectedDateFrom = computed(() => {
-      return (!dateStateFrom.value);
-    });
-
-    const isSelectedDateFromTo = computed(() => {
-      return (!dateStateFrom.value || !dateStateTo.value);
-    });
-
-    const isSelectedDateRate = computed(() => {
-      return (!dateStateFrom.value || !dateStateTo.value || !selectedRate.value);
-    });
+    const isSelectedDateFrom = computed(() => dateStateFrom.value);
+    const isSelectedDateFromTo = computed(() => dateStateFrom.value && dateStateTo.value);
+    const isSelectedDateRate = computed(() => dateStateFrom.value && dateStateTo.value && selectedRate.value);
 
     //methods
     //получение списка тарифов по API
@@ -195,22 +164,13 @@ export default {
       dateObj.setHours(0, 0, 0);
       for (let i = 0; i <= 90; i++) {
         dateObj.setDate(dateObj.getDate() + 1);
-        let newDate = formatedDate(dateObj);
-
-        let dateFromString = newDate + " " + "00:00";
-        let newObjDateFrom = {
-          id: i,
-          value: dateObj.getTime(),
-          dateString: dateFromString,
-        };
-        arrayDateFrom.value.push(newObjDateFrom); //запись в массив дат и время для выбора дат и времени в первом селекте
-
-        let newObjDate = {
+        const newDate = formatedDate(dateObj);
+        const newObjDate = {
           id: i,
           value: dateObj.getTime(),
           dateString: newDate,
         };
-        arrayDate.value.push(newObjDate); //запись в массив дат для выбора во втором селекте
+        arrayDate.value.push(newObjDate); //запись в массив дат для выбора в селекте
       }
     };
 
@@ -243,9 +203,9 @@ export default {
         "23:00",
       ];
       for (let j = 0; j < time.length; j++) {
-        let time_parts = time[j].split(":");
-        let millisecond = time_parts[0] * (60000 * 60) + time_parts[1] * 60000;
-        let newObjTime = { id: j, value: millisecond, dateString: time[j] };
+        const time_parts = time[j].split(":");
+        const millisecond = time_parts[0] * (60000 * 60) + time_parts[1] * 60000;
+        const newObjTime = { id: j, value: millisecond, dateString: time[j] };
         arrayTime.value.push(newObjTime); //запись в массив время для выбора во втором селекте
       }
     };
@@ -336,6 +296,9 @@ export default {
     };
     const resetSelectedRate = () => {
       store.dispatch("GET_CHECKEDRATE");
+      store.dispatch("GET_CHECKEDTANK");
+      store.dispatch("GET_CHECKEDBABYCHAIR");
+      store.dispatch("GET_CHECKEDRIGHTHANDDRIVE");
     };
 
     //SELECTED TANK
@@ -371,7 +334,6 @@ export default {
     getRateFromApi();
 
     return {
-      arrayDateFrom,
       arrayDate,
       arrayTime,
       rateList,
@@ -433,6 +395,16 @@ export default {
 .radio-list {
   display: flex;
   margin-bottom: 30px;
+}
+
+.item_blocked {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.item_available {
+  opacity: 1;
+  pointer-events: unset;
 }
 
 .additional__text {

@@ -2,6 +2,9 @@ import { createStore } from "vuex";
 import apiServices from "../services/apiServices";
 
 const limit = 5; //лимит на количество загруженных авто в область видимости
+const orderNewStatusId = "5e26a191099b810b946c5d89";
+const orderConfirmedStatusId = "5e26a1f0099b810b946c5d8b";
+// orderCanceledStatusId: "5e26a1f5099b810b946c5d8c",
 
 export default createStore({
   state: {
@@ -11,19 +14,25 @@ export default createStore({
     categoryList: [],
     cars: {},
     rateList: [],
-
+    //ORDER
+    orderId: "",
+    orderConfirmed: {},
     //USER SELECTED
     selectedCity: {},
     selectedPoint: {},
     checkedCategoryCars: "",
     selectedCar: {},
     selectedColor: "",
+    chosenDateFromMs: 0, //выбранная дата в миллисекундах в поле "С"
+    chosenTimeFromMs: 0, //выбранное время в миллисекундах в поле "С"
     selectedDateFrom: "Введите дату и время...", //дата для отображения в инпуте
     selectedTimeFrom: "", //время для отображения в инпуте
+    chosenDateToMs: 0, //выбранная дата в миллисекундах в поле "По" 
+    chosenTimeToMs: 0, //выбранное время в миллисекундах в поле "С"
     selectedDateTo: "Введите дату и время...", //дата для отображения в инпуте
     selectedTimeTo: "", //время для отображения в инпуте
-    dateFrom: 0, //дата в миллисекундах
-    dateTo: 0, //дата в миллисекундах
+    dateFrom: 0, //дата со временем в миллисекундах
+    dateTo: 0, //дата со временем в миллисекундах
     rentalDuration: "", //длительнотсь аренды
     selectedRate: "",
     selectedTank: false,
@@ -79,6 +88,19 @@ export default createStore({
     SET_RATE_TO_STATE: (state, rateList) => {
       state.rateList = rateList.data.data;
     },
+    //заказ
+    SET_ORDERID_TO_STATE: (state, order) => {
+      state.orderId = order.data.data.id;
+    },
+    RESET_ORDERID_TO_STATE: (state) => {
+      state.orderId = "";
+    },
+    SET_ORDERCONFIRMED_TO_STATE: (state, orderConfirmed) => {
+      state.orderConfirmed = orderConfirmed.data.data;
+    },
+    RESET_ORDERCONFIRMED_TO_STATE: (state) => {
+      state.orderConfirmed = {};
+    },
 
     //SELECTED
     //CITY
@@ -118,37 +140,53 @@ export default createStore({
     },
     //DATEFROM
     SET_SELECTEDDATEFROM(state, selectedDateFrom) {
+      state.chosenDateFromMs = selectedDateFrom.value;
+
       state.selectedDateFrom = selectedDateFrom.dateString;
       state.dateFrom = selectedDateFrom.value;
     },
     RESET_SELECTEDDATEFROM(state) {
+      state.chosenDateFromMs = 0;
+
       state.selectedDateFrom = "Введите дату и время...";
       state.dateFrom = 0;
     },
     //TIMEFROM
     SET_SELECTEDTIMEFROM(state, selectedTimeFrom) {
+      state.chosenTimeFromMs = selectedTimeFrom.value;
+
       state.selectedTimeFrom = selectedTimeFrom.dateString;
       state.dateFrom = state.dateFrom + selectedTimeFrom.value;
     },
     RESET_SELECTEDTIMEFROM(state) {
+      state.chosenTimeFromMs = 0;
+
       state.selectedTimeFrom = "";
       state.dateFrom = 0;
     },
     //DATETO
     SET_SELECTEDDATETO(state, selectedDateTo) {
+      state.chosenDateToMs = selectedDateTo.value;
+
       state.selectedDateTo = selectedDateTo.dateString;
       state.dateTo = selectedDateTo.value;
     },
     RESET_SELECTEDDATETO(state) {
+      state.chosenDateToMs = 0;
+
       state.selectedDateTo = "Введите дату и время...";
       state.dateTo = 0;
     },
     //TIMETO
     SET_SELECTEDTIMETO(state, selectedTimeTo) {
+      state.chosenTimeToMs = selectedTimeTo.value;
+
       state.selectedTimeTo = selectedTimeTo.dateString;
       state.dateTo = state.dateTo + selectedTimeTo.value;
     },
     RESET_SELECTEDTIMETO(state) {
+      state.chosenTimeToMs = 0;
+
       state.selectedTimeTo = "";
       state.dateTo = 0;
     },
@@ -255,13 +293,35 @@ export default createStore({
         .getRate()
         .then((rateList) => {
           commit("SET_RATE_TO_STATE", rateList);
-          console.log(rateList);
           return rateList;
         })
         .catch((error) => {
           console.log(error);
           return error;
         });
+    },
+    async POST_ORDER_TO_API({ commit, state }) {
+      const order = await apiServices.postOrder({
+          orderStatusId: orderNewStatusId,
+          cityId: state.selectedCity.id,
+          pointId: state.selectedPoint.id,
+          carId: state.selectedCar.id,
+          color: state.selectedColor,
+          dateFrom: state.dateFrom,
+          dateTo: state.dateTo,
+          rateId: state.selectedRate,
+          price: state.priceSummary,
+          isFullTank: state.selectedTank,
+          isNeedChildChair: state.selectedBabyChair,
+          isRightWheel: state.selectedRightHandDrive,
+        });
+      commit("SET_ORDERID_TO_STATE", order);
+    },
+    async GET_ORDER_FROM_API({ commit, state }) {
+      const orderConfirmed = await apiServices.getOrder(state.orderId, {
+          orderStatusId: orderConfirmedStatusId,
+        });
+      commit("SET_ORDERCONFIRMED_TO_STATE", orderConfirmed);
     },
 
     //SELECTED
@@ -368,6 +428,20 @@ export default createStore({
         commit("SET_PRICESUMMARY", pricesummary);
       } else {
         commit("RESET_PRICESUMMARY");
+      }
+    },
+    GET_ORDERID({ commit }, order) {
+      if (order) {
+        commit("SET_ORDERID_TO_STATE", order);
+      } else {
+        commit("RESET_ORDERID_TO_STATE");
+      }
+    },
+    GET_ORDERCONFIRMED({ commit }, order) {
+      if (order) {
+        commit("SET_ORDERCONFIRMED_TO_STATE", order);
+      } else {
+        commit("RESET_ORDERCONFIRMED_TO_STATE");
       }
     },
   },
