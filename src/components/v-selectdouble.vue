@@ -30,20 +30,6 @@
             {{ option.dateString }}
           </p>
         </div>
-        <!-- <div
-          class="select__options-list"
-          :class="{ list_blocked: selectedDate === 'Введите дату и время...' }"
-        >
-          <p
-            class="select__options-item select__text"
-            v-for="option in optionsTime"
-            :key="option.id"
-            :class="{ item_blocked: chosenDateFromMs === chosenDateToMs && option.value <= chosenTimeFromMs }"
-            @click="selectTime(option)"
-          >
-            {{ option.dateString }}
-          </p>
-        </div> -->
         <div
           class="select__options-list"
           :class="{ list_blocked: selectedDate === 'Введите дату и время...' }"
