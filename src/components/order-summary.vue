@@ -73,7 +73,6 @@ export default {
 .summary__wrp {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
 }
 
 .summary__title {
@@ -133,6 +132,14 @@ export default {
 }
 
 .car__img {
-  max-width: 50%;
+  max-width: 30%;
+
+  @media #{$media} and (min-width: $tablet-min) and (max-width: $tablet-max) {
+    max-width: 50%;
+  }
+
+  @media #{$media} and (min-width: $mobile-min) and (max-width: $mobile-max) {
+    max-width: 40%;
+  }
 }
 </style>
