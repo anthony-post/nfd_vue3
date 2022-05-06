@@ -150,11 +150,11 @@ export default {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  overflow: scroll;
+  overflow-y: scroll;
   height: calc(100vh - 274px);
 
   @media #{$media} and (min-width: $mobile-min) and (max-width: $mobile-max) {
-    overflow: scroll;
+    overflow-y: scroll;
     height: 40vh;
   }
 }

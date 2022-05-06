@@ -196,7 +196,7 @@ export default {
 }
 
 .select__options-list {
-  overflow: scroll;
+  overflow-y: scroll;
   padding: 0 15px 0 0;
   color: $color;
 }
