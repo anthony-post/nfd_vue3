@@ -157,7 +157,6 @@ export default {
 .order {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
 
   @media #{$media} and (min-width: $mobile-min) and (max-width: $mobile-max) {
     flex-wrap: wrap;
@@ -166,14 +165,14 @@ export default {
 
 .order__window {
   flex-basis: 70%;
-  padding: 32px 150px 0 64px;
+  padding: 32px 0 0 64px;
 
   @media #{$media} and (min-width: $desktop-min) and (max-width: $desktop-max) {
-    padding: 32px 32px 0 32px;
+    padding: 32px 0 0 32px;
   }
 
   @media #{$media} and (min-width: $tablet-min) and (max-width: $tablet-max) {
-    padding: 32px 32px 0 64px;
+    padding: 32px 0 0 64px;
   }
 
   @media #{$media} and (min-width: $mobile-min) and (max-width: $mobile-max) {

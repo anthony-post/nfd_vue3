@@ -257,7 +257,6 @@ export default createStore({
           return cityList;
         })
         .catch((error) => {
-          console.log(error);
           return error;
         });
     },
@@ -269,7 +268,6 @@ export default createStore({
           return pointList;
         })
         .catch((error) => {
-          console.log(error);
           return error;
         });
     },
@@ -296,7 +294,6 @@ export default createStore({
           return rateList;
         })
         .catch((error) => {
-          console.log(error);
           return error;
         });
     },

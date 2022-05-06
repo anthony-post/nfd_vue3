@@ -15,7 +15,7 @@ const routes = [
     component: Vorder,
   },
   {
-    path: "/order_id",
+    path: "/order_:id",
     name: "v-orderid",
     component: OrderConfirm,
   },
