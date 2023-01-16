@@ -26,11 +26,17 @@
                 <dt class="summary__additional-title">Топливо</dt>
                 <dd class="summary__selected-value">100&percnt;</dd>
               </dl>
-              <dl v-if="orderConfirmed?.isNeedChildChair" class="summary__additional">
+              <dl
+                v-if="orderConfirmed?.isNeedChildChair"
+                class="summary__additional"
+              >
                 <dt class="summary__additional-title">Детское кресло</dt>
                 <dd class="summary__selected-value">Да</dd>
               </dl>
-              <dl v-if="orderConfirmed?.isRightWheel" class="summary__additional">
+              <dl
+                v-if="orderConfirmed?.isRightWheel"
+                class="summary__additional"
+              >
                 <dt class="summary__additional-title">Правый руль</dt>
                 <dd class="summary__selected-value">Да</dd>
               </dl>
@@ -54,8 +60,12 @@
             <li>
               <span class="item__title">Пункт выдачи</span>
               <div class="item__value">
-                <span v-if="orderConfirmed?.cityId">{{ orderConfirmed.cityId.name }}</span>
-                <span v-if="orderConfirmed?.pointId">{{ orderConfirmed.pointId.name }}</span>
+                <span v-if="orderConfirmed?.cityId">{{
+                  orderConfirmed.cityId.name
+                }}</span>
+                <span v-if="orderConfirmed?.pointId">{{
+                  orderConfirmed.pointId.name
+                }}</span>
               </div>
             </li>
             <li v-if="orderConfirmed?.carId">
@@ -68,12 +78,22 @@
             </li>
             <li v-if="rentalDuration">
               <span class="item__title">Длительность аренд</span>
-              <span v-if="rentalDuration.days" class="item__value">{{ rentalDuration.days }}д</span>
-              <span v-if="rentalDuration.hours" class="item__value">{{ rentalDuration.hours }}ч</span>
+              <span v-if="rentalDuration.days" class="item__value"
+                >{{ rentalDuration.days }}д</span
+              >
+              <span v-if="rentalDuration.hours" class="item__value"
+                >{{ rentalDuration.hours }}ч</span
+              >
             </li>
+            <!-- <li v-if="orderConfirmed?.rateId">
+              <span class="item__title">Тариф</span>
+              <span class="item__value">{{
+                orderConfirmed.rateId.rateTypeId.name
+              }}</span>
+            </li> -->
             <li v-if="orderConfirmed?.rateId">
               <span class="item__title">Тариф</span>
-              <span class="item__value">{{ orderConfirmed.rateId.rateTypeId.name }}</span>
+              <span class="item__value">{{ getNameRate }}</span>
             </li>
             <li v-if="orderConfirmed?.isFullTank">
               <span class="item__title">Полный бак</span>
@@ -91,7 +111,9 @@
           <!--Цена-->
           <p class="total__price">
             Цена:
-            <span class="total__price total__price-thin">{{ orderConfirmed.price }} &#8381;</span>
+            <span class="total__price total__price-thin"
+              >{{ orderConfirmed.price }} &#8381;</span
+            >
           </p>
           <!--Кнопка Отменить-->
           <router-link :to="{ name: 'v-order' }">
@@ -122,13 +144,34 @@ export default {
   setup() {
     const store = useStore();
 
+    const canceledOrderStatusId = {
+      id: 7,
+      name: "Отмененный",
+    };
+
     //computed
     const orderId = computed(() => store.state.orderId);
     const rentalDuration = computed(() => store.state.rentalDuration);
     const orderConfirmed = computed(() => store.state.orderConfirmed);
+    const rateList = computed(() => store.state.rateList);
+    //поиск выбранного id тарифа в массиве и получение его наименования
+    const getNameRate = computed(() => {
+      return rateList.value.reduce((accumulator, rate) => {
+        if (rate.rateTypeId.id === orderConfirmed.value.rateId.rateType_id) {
+          accumulator = rate.rateTypeId.name;
+        }
+        return accumulator;
+      }, "");
+    });
     //конвертирование даты из мс в строку
     const convertToDate = computed(() => {
-      const mlsDate = orderConfirmed.value.dateFrom;
+      let mlsDate = null;
+      if (typeof orderConfirmed.value.dateFrom === "string") {
+        mlsDate = +orderConfirmed.value.dateFrom;
+      } else {
+        mlsDate = orderConfirmed.value.dateFrom;
+      }
+
       const dateObj = new Date(mlsDate);
 
       let dd = dateObj.getDate();
@@ -150,16 +193,38 @@ export default {
     });
 
     const carPic = computed(() => {
-      return Object.keys(orderConfirmed.value.carId.thumbnail).length !== 0 ? orderConfirmed.value.carId.thumbnail : {};
+      return Object.keys(orderConfirmed.value.carId.thumbnail).length !== 0
+        ? orderConfirmed.value.carId.thumbnail
+        : {};
     });
 
     //methods
     const getOrderFromApi = () => store.dispatch("GET_ORDER_FROM_API");
+    // const putCancelOrderToApi = async () => {
+    //   const orderCanceledStatusId = "5e26a1f5099b810b946c5d8c";
+    //   const orderStatusId = orderCanceledStatusId;
+    //   try {
+    //     await apiServices.putOrder(orderId.value, { orderStatusId });
+    //   } catch (error) {
+    //     alert("Что-то пошло не так :-)" + " " + error);
+    //   }
+    // };
     const putCancelOrderToApi = async () => {
-      const orderCanceledStatusId = "5e26a1f5099b810b946c5d8c";
-      const orderStatusId = orderCanceledStatusId;
       try {
-        await apiServices.putOrder(orderId.value, { orderStatusId });
+        await apiServices.putOrder(orderId.value, {
+          orderStatusId: canceledOrderStatusId,
+          cityId: orderConfirmed.value.cityId,
+          pointId: orderConfirmed.value.pointId,
+          carId: orderConfirmed.value.carId,
+          rateId: orderConfirmed.value.rateId,
+          color: orderConfirmed.value.color,
+          dateFrom: orderConfirmed.value.dateFrom,
+          dateTo: orderConfirmed.value.dateTo,
+          price: orderConfirmed.value.price,
+          isFullTank: orderConfirmed.value.isFullTank,
+          isNeedChildChair: orderConfirmed.value.isNeedChildChair,
+          isRightWheel: orderConfirmed.value.isRightWheel,
+        });
       } catch (error) {
         alert("Что-то пошло не так :-)" + " " + error);
       }
@@ -194,6 +259,7 @@ export default {
       orderId,
       rentalDuration,
       orderConfirmed,
+      getNameRate,
       convertToDate,
       carPic,
       getOrderFromApi,

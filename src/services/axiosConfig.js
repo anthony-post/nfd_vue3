@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const instance = axios.create({
-  baseURL: "https://api-factory.simbirsoft1.com/api",
+  baseURL: "https://frontend-study.simbirsoft.dev/api",
 });
 
 instance.defaults.headers.common["X-Api-Factory-Application-Id"] =

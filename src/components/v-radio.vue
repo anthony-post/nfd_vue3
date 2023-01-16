@@ -24,16 +24,14 @@ export default {
       required: true,
     },
     checkedValue: {
-      type: String,
-      default: "",
+      type: [String, Number],
     },
     value: {
-      type: String,
-      default: "",
+      type: [String, Number],
     },
   },
   setup(props) {
-    const isChecked = computed(() => props.checkedValue === props.value);
+    const isChecked = computed(() => props.checkedValue == props.value);
 
     return {
       isChecked,
