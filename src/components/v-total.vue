@@ -122,47 +122,39 @@ export default {
     //поиск выбранного id тарифа в массиве и получение его наименования
     const getNameRate = computed(() => {
       return rateList.value.reduce((accumulator, rate) => {
-        if(rate.id === selectedRate.value) {
+        if (rate.id === selectedRate.value) {
           accumulator = rate.rateTypeId.name;
         }
         return accumulator;
-      }, '');
+      }, "");
     });
 
     //подсчет итоговой суммы заказа
     const getPriceSummary = computed(() => {
-      const rateDayId = "62593cac73b61100181028ee";
-      const rateWeekId = "62593cca73b61100181028ef";
-      const rateMonthId = "6259003d73b61100181028d9";
-      const rateQuarterSaleId = "62593cf073b61100181028f1";
-      const rateQuarterId = "626ac00373b611001810412b";
-      const rateYearId = "62593d0273b61100181028f2";
+      const rateDayId = 2;
+      const rateWeekId = 1;
+      const rateMonthId = 3;
+
       const priceTank = 500;
       const priceBabyChair = 200;
       const priceRightHandDrive = 1600;
+
       const day = 1;
       const week = 7;
       const month = 30;
-      const qourter = 90;
-      const quorterSale = 93;
-      const year = 365;
+
       const dayMs = 86400000;
       const duration = dateStateTo.value - dateStateFrom.value;
       let priceCalculated;
 
       rateList.value.forEach((rate) => {
-
         //day rate
         if (
           selectedRate.value === rate.id &&
           selectedRate.value === rateDayId
         ) {
           if (duration >= dayMs && duration < week * dayMs) {
-            priceCalculated = calcPrice(
-              rate.price,
-              day,
-              duration
-            );
+            priceCalculated = calcPrice(rate.price, day, duration);
           } else {
             resetRateAndAdditional();
           }
@@ -180,11 +172,7 @@ export default {
           selectedRate.value === rateWeekId
         ) {
           if (duration === week * dayMs) {
-            priceCalculated = calcPrice(
-              rate.price,
-              week,
-              duration
-            );
+            priceCalculated = calcPrice(rate.price, week, duration);
           } else {
             resetRateAndAdditional();
           }
@@ -202,77 +190,7 @@ export default {
           selectedRate.value === rateMonthId
         ) {
           if (duration === month * dayMs) {
-            priceCalculated = calcPrice(
-              rate.price,
-              month,
-              duration
-            );
-          } else {
-            resetRateAndAdditional();
-          }
-          priceCalculated = calcAddService(
-            priceCalculated,
-            priceTank,
-            priceBabyChair,
-            priceRightHandDrive
-          );
-        }
-
-        //3 months rate
-        if (
-          selectedRate.value === rate.id &&
-          selectedRate.value === rateQuarterId
-        ) {
-          if (duration === qourter * dayMs) {
-            priceCalculated = calcPrice(
-              rate.price,
-              qourter,
-              duration
-            );
-          } else {
-            resetRateAndAdditional();
-          }
-          priceCalculated = calcAddService(
-            priceCalculated,
-            priceTank,
-            priceBabyChair,
-            priceRightHandDrive
-          );
-        }
-
-        //3 months sale rate
-        if (
-          selectedRate.value === rate.id &&
-          selectedRate.value === rateQuarterSaleId
-        ) {
-          if (duration === quorterSale * dayMs) {
-            priceCalculated = calcPrice(
-              rate.price,
-              qourter,
-              duration
-            );
-          } else {
-            resetRateAndAdditional();
-          }
-          priceCalculated = calcAddService(
-            priceCalculated,
-            priceTank,
-            priceBabyChair,
-            priceRightHandDrive
-          );
-        }
-
-        //year rate
-        if (
-          selectedRate.value === rate.id &&
-          selectedRate.value === rateYearId
-        ) {
-          if (duration === year * dayMs) {
-            priceCalculated = calcPrice(
-              rate.price,
-              year,
-              duration
-            );
+            priceCalculated = calcPrice(rate.price, month, duration);
           } else {
             resetRateAndAdditional();
           }
@@ -289,17 +207,18 @@ export default {
       return priceCalculated;
     });
 
-    const orderPlaceFilledUp = computed(() => 
+    const orderPlaceFilledUp = computed(
+      () =>
         Object.keys(selectedCity.value).length &&
         Object.keys(selectedPoint.value).length !== 0
     );
 
-    const orderModelFilledUp = computed(() => 
-      Object.keys(selectedCar.value).length !== 0
+    const orderModelFilledUp = computed(
+      () => Object.keys(selectedCar.value).length !== 0
     );
 
-    const orderAdditionalFilledUp = computed(() => 
-      dateStateFrom.value && dateStateTo.value && selectedRate.value
+    const orderAdditionalFilledUp = computed(
+      () => dateStateFrom.value && dateStateTo.value && selectedRate.value
     );
 
     //methods
@@ -337,7 +256,14 @@ export default {
     };
 
     const calcPrice = (ratePrice, durationDays, durationMs) => {
-      const durationPrice = ratePrice / (durationDays * 86400000);
+      let ratePriceItem = null;
+      if (typeof ratePrice === "string") {
+        ratePriceItem = +ratePrice;
+      } else {
+        ratePriceItem = ratePrice;
+      }
+
+      const durationPrice = ratePriceItem / (durationDays * 86400000);
       const priceSummary = Math.round(durationMs * durationPrice);
       return priceSummary;
     };
@@ -352,34 +278,34 @@ export default {
       );
     };
 
-    const isButtonDisabled = button => {
-      if(button.id === props.tabs[0].id) {
+    const isButtonDisabled = (button) => {
+      if (button.id === props.tabs[0].id) {
         return !orderPlaceFilledUp.value;
       }
 
-      if(button.id === props.tabs[1].id) {
+      if (button.id === props.tabs[1].id) {
         return !orderModelFilledUp.value;
       }
 
-      if(button.id === props.tabs[2].id) {
+      if (button.id === props.tabs[2].id) {
         return !orderAdditionalFilledUp.value;
       }
     };
 
-    const buttonAction = button => {
-      if(button.id === props.tabs[0].id) {
+    const buttonAction = (button) => {
+      if (button.id === props.tabs[0].id) {
         changeSelectedTabModel();
       }
 
-      if(button.id === props.tabs[1].id) {
+      if (button.id === props.tabs[1].id) {
         changeSelectedTabAdditional();
       }
 
-      if(button.id === props.tabs[2].id) {
+      if (button.id === props.tabs[2].id) {
         changeSelectedTabSummary();
       }
 
-      if(button.id === props.tabs[3].id) {
+      if (button.id === props.tabs[3].id) {
         showPopUp();
       }
     };

@@ -101,7 +101,7 @@ export default {
     });
 
     function selectItem(chosenItem) {
-      if (chosenItem) {
+      if (Object.keys(chosenItem).length !== 0) {
         inputValue.value = chosenItem.name;
       } else {
         inputValue.value = "";

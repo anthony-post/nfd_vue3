@@ -1,10 +1,7 @@
 import { createStore } from "vuex";
 import apiServices from "../services/apiServices";
 
-const limit = 5; //лимит на количество загруженных авто в область видимости
-const orderNewStatusId = "5e26a191099b810b946c5d89";
-const orderConfirmedStatusId = "5e26a1f0099b810b946c5d8b";
-// orderCanceledStatusId: "5e26a1f5099b810b946c5d8c",
+const limit = 4; //лимит на количество загруженных авто в область видимости
 
 export default createStore({
   state: {
@@ -17,6 +14,7 @@ export default createStore({
     //ORDER
     orderId: "",
     orderConfirmed: {},
+    errorStatus: null,
     //USER SELECTED
     selectedCity: {},
     selectedPoint: {},
@@ -34,7 +32,7 @@ export default createStore({
     dateFrom: 0, //дата со временем в миллисекундах
     dateTo: 0, //дата со временем в миллисекундах
     rentalDuration: "", //длительнотсь аренды
-    selectedRate: "",
+    selectedRate: null,
     selectedTank: false,
     selectedBabyChair: false,
     selectedRightHandDrive: false,
@@ -100,6 +98,9 @@ export default createStore({
     },
     RESET_ORDERCONFIRMED_TO_STATE: (state) => {
       state.orderConfirmed = {};
+    },
+    SET_ERRORSTATUS_TO_STATE: (state, error) => {
+      state.errorStatus = error;
     },
 
     //SELECTED
@@ -213,10 +214,14 @@ export default createStore({
     },
     //RATE
     SET_SELECTEDRATE(state, selectedRate) {
-      state.selectedRate = selectedRate;
+      if (typeof selectedRate === 'string') {
+        state.selectedRate = +selectedRate;
+      } else {
+        state.selectedRate = selectedRate;
+      }
     },
     RESET_SELECTEDRATE(state) {
-      state.selectedRate = "";
+      state.selectedRate = null;
     },
     //TANK
     SET_SELECTEDTANK(state, selectedTank) {
@@ -272,53 +277,82 @@ export default createStore({
         });
     },
     async GET_CATEGORYLIST_FROM_API({ commit }) {
-      const categories = await apiServices.getCategories();
-      commit("SET_CATEGORYLIST_TO_STATE", categories.data.data);
-    },
-    async GET_FILTEREDCARLIST_FROM_API({ commit, state }, categoryId) {
-      if (categoryId === "no-filter") {
-        const page = state.cars["no-filter"]?.page;
-        const carsData = await apiServices.getCars({ page, limit });
-        commit("SET_CARS_DATA", { carsData });
-      } else {
-        const page = state.cars[categoryId]?.page;
-        const carsData = await apiServices.getCars({ categoryId, page, limit });
-        commit("SET_CARS_DATA", { carsData, categoryId });
+      try {
+        const categories = await apiServices.getCategories();
+        commit("SET_CATEGORYLIST_TO_STATE", categories.data.data);
+      } catch (error) {
+        throw new Error(error);
       }
     },
-    GET_RATE_FROM_API({ commit }) {
-      apiServices
-        .getRate()
-        .then((rateList) => {
-          commit("SET_RATE_TO_STATE", rateList);
-          return rateList;
-        })
-        .catch((error) => {
-          return error;
-        });
+    async GET_FILTEREDCARLIST_FROM_API({ commit, state }, categoryId) {
+      try {
+        if (categoryId === "no-filter") {
+          const page = state.cars["no-filter"]?.page;
+          const carsData = await apiServices.getCars({ page, limit });
+          commit("SET_CARS_DATA", { carsData });
+        } else {
+          const page = state.cars[categoryId]?.page;
+          const carsData = await apiServices.getCars({ categoryId, page, limit });
+          commit("SET_CARS_DATA", { carsData, categoryId });
+        }
+      } catch (error) {
+        throw new Error(error);
+      }
+    },
+    async GET_RATE_FROM_API({ commit }) {
+      try {
+        const rateList = await apiServices.getRate()
+        commit("SET_RATE_TO_STATE", rateList);
+      } catch (error) {
+        throw new Error(error);
+      }
     },
     async POST_ORDER_TO_API({ commit, state }) {
-      const order = await apiServices.postOrder({
-          orderStatusId: orderNewStatusId,
-          cityId: state.selectedCity.id,
-          pointId: state.selectedPoint.id,
-          carId: state.selectedCar.id,
+      const getRateTypeId = () => {
+        return state.rateList.reduce((accumulator, rate) => {
+          if (rate.id === state.selectedRate) {
+            accumulator = rate.rateTypeId.id;
+          }
+          return accumulator;
+        }, "");
+      };
+
+      try {
+        const order = await apiServices.postOrder({
+          // orderStatusId: orderNewStatusId,
+          cityId: {
+            id: state.selectedCity.id
+          },
+          pointId: {
+            id: state.selectedPoint.id
+          },
+          carId: {
+            id: state.selectedCar.id
+          },
           color: state.selectedColor,
           dateFrom: state.dateFrom,
           dateTo: state.dateTo,
-          rateId: state.selectedRate,
+          rateId: {
+            id: state.selectedRate,
+            rateType_id: getRateTypeId(),
+          },
           price: state.priceSummary,
           isFullTank: state.selectedTank,
           isNeedChildChair: state.selectedBabyChair,
           isRightWheel: state.selectedRightHandDrive,
         });
-      commit("SET_ORDERID_TO_STATE", order);
+        commit("SET_ORDERID_TO_STATE", order);
+      } catch (error) {
+        commit("SET_ERRORSTATUS_TO_STATE", error);
+      }
     },
     async GET_ORDER_FROM_API({ commit, state }) {
-      const orderConfirmed = await apiServices.getOrder(state.orderId, {
-          orderStatusId: orderConfirmedStatusId,
-        });
-      commit("SET_ORDERCONFIRMED_TO_STATE", orderConfirmed);
+      try {
+        const orderConfirmed = await apiServices.getOrder(state.orderId);
+        commit("SET_ORDERCONFIRMED_TO_STATE", orderConfirmed);
+      } catch (error) {
+        throw new Error(error);
+      }
     },
 
     //SELECTED
@@ -444,10 +478,10 @@ export default createStore({
   },
   getters: {
     FILTERED_POINTLIST(state) {
-      if (state.selectedCity?.id) {
+      if (Object.keys(state.selectedCity).length !== 0 && state.selectedCity?.id) {
         return state.pointList.filter((point) => {
           if (point?.cityId?.id) {
-            return point.cityId.id.includes(state.selectedCity.id);
+            return point.cityId.id === state.selectedCity.id
           }
         });
       } else {
@@ -459,7 +493,14 @@ export default createStore({
       if (categoryId === "no-filter") {
         return state.cars["no-filter"]?.value;
       } else {
-        return state.cars[categoryId]?.value;
+        // return state.cars[categoryId]?.value;
+
+        //временное решение, так как на бэке перестали проходить запросы по фильтру по категориям авто
+        return state.cars[categoryId]?.value.filter((car) => {
+          if (car?.categoryId?.id) {
+            return car.categoryId.id == categoryId
+          }
+        });
       }
     },
   },

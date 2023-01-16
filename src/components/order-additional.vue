@@ -44,11 +44,8 @@
       </p>
     </div>
     <p class="additional__text">Тариф</p>
-    <div
-      class="tarif-wrp"
-      :class="{ select_blocked: !isSelectedDateFromTo }"
-    >
-      <VRadio
+    <div class="tarif-wrp" :class="{ select_blocked: !isSelectedDateFromTo }">
+      <!-- <VRadio
         v-model:checkedValue="checkedRate"
         v-for="rate in rateList"
         :key="rate.id"
@@ -60,6 +57,13 @@
           rate?.rateTypeId?.unit
         "
         :value="rate.id"
+      /> -->
+      <VRadio
+        v-model:checkedValue="checkedRate"
+        v-for="rate in rateList"
+        :key="rate.id"
+        :label="`${rate?.rateTypeId?.name} ${rate?.price}Р/${rate?.rateTypeId?.unit}`"
+        :value="rate.id"
       />
     </div>
     <p class="additional__text">Доп услуги</p>
@@ -70,14 +74,8 @@
       }"
     >
       <VCheckbox v-model="checkedTank" label="Полный бак, 500р" />
-      <VCheckbox
-        v-model="checkedBabyChair"
-        label="Детское кресло, 200р"
-      />
-      <VCheckbox
-        v-model="checkedRightHandDrive"
-        label="Правый руль, 1600р"
-      />
+      <VCheckbox v-model="checkedBabyChair" label="Детское кресло, 200р" />
+      <VCheckbox v-model="checkedRightHandDrive" label="Правый руль, 1600р" />
     </div>
   </div>
 </template>
@@ -122,32 +120,40 @@ export default {
 
     const checkedColor = computed({
       get: () => selectedColor.value,
-      set: checkedColorCar => store.dispatch("GET_CHECKEDCOLOR", checkedColorCar),
+      set: (checkedColorCar) =>
+        store.dispatch("GET_CHECKEDCOLOR", checkedColorCar),
     });
 
     const checkedRate = computed({
       get: () => selectedRate.value,
-      set: checkedRateCar => store.dispatch("GET_CHECKEDRATE", checkedRateCar),
+      set: (checkedRateCar) =>
+        store.dispatch("GET_CHECKEDRATE", checkedRateCar),
     });
 
     const checkedTank = computed({
       get: () => selectedTank.value,
-      set: checkedTankCar => store.commit("SET_SELECTEDTANK", checkedTankCar),
+      set: (checkedTankCar) => store.commit("SET_SELECTEDTANK", checkedTankCar),
     });
 
     const checkedBabyChair = computed({
       get: () => selectedBabyChair.value,
-      set: checkedBabyChairCar => store.commit("SET_SELECTEDBABYCHAIR", checkedBabyChairCar),
+      set: (checkedBabyChairCar) =>
+        store.commit("SET_SELECTEDBABYCHAIR", checkedBabyChairCar),
     });
 
     const checkedRightHandDrive = computed({
       get: () => selectedRightHandDrive.value,
-      set: checkedRightHandDriveCar => store.commit("SET_SELECTEDRIGHTHANDDRIVE", checkedRightHandDriveCar),
+      set: (checkedRightHandDriveCar) =>
+        store.commit("SET_SELECTEDRIGHTHANDDRIVE", checkedRightHandDriveCar),
     });
 
     const isSelectedDateFrom = computed(() => dateStateFrom.value);
-    const isSelectedDateFromTo = computed(() => dateStateFrom.value && dateStateTo.value);
-    const isSelectedDateRate = computed(() => dateStateFrom.value && dateStateTo.value && selectedRate.value);
+    const isSelectedDateFromTo = computed(
+      () => dateStateFrom.value && dateStateTo.value
+    );
+    const isSelectedDateRate = computed(
+      () => dateStateFrom.value && dateStateTo.value && selectedRate.value
+    );
 
     //methods
     //получение списка тарифов по API
@@ -204,7 +210,8 @@ export default {
       ];
       for (let j = 0; j < time.length; j++) {
         const time_parts = time[j].split(":");
-        const millisecond = time_parts[0] * (60000 * 60) + time_parts[1] * 60000;
+        const millisecond =
+          time_parts[0] * (60000 * 60) + time_parts[1] * 60000;
         const newObjTime = { id: j, value: millisecond, dateString: time[j] };
         arrayTime.value.push(newObjTime); //запись в массив время для выбора во втором селекте
       }

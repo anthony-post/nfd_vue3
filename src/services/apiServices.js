@@ -37,9 +37,7 @@ export default {
       ...data,
     });
   },
-  getOrder(idOrder, data = {}) {
-    return axiosConfig.get(url.ORDER + '/' + idOrder, {
-      ...data,
-    });
+  getOrder(idOrder) {
+    return axiosConfig.get(url.ORDER + '/' + idOrder);
   },
 };
