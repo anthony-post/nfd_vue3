@@ -1,7 +1,7 @@
 import { createStore } from "vuex";
 import apiServices from "../services/apiServices";
 
-const limit = 4; //лимит на количество загруженных авто в область видимости
+const limit = 8; //лимит на количество загруженных авто в область видимости
 
 export default createStore({
   state: {
@@ -66,6 +66,9 @@ export default createStore({
     },
     //авто
     SET_CARS_DATA: (state, { carsData, categoryId }) => {
+
+      state.cars.count = carsData.data.count;
+
       if (!categoryId) {
         const carsAllCategory = state.cars["no-filter"];
         carsAllCategory.value.push(...carsData.data.data);
@@ -288,12 +291,22 @@ export default createStore({
       try {
         if (categoryId === "no-filter") {
           const page = state.cars["no-filter"]?.page;
-          const carsData = await apiServices.getCars({ page, limit });
-          commit("SET_CARS_DATA", { carsData });
+          if (!state.cars.count) {
+            const carsData = await apiServices.getCars({ page, limit });
+            commit("SET_CARS_DATA", { carsData });
+          } else if (state.cars.count && state.cars["no-filter"]?.value.length < state.cars.count) {
+            const carsData = await apiServices.getCars({ page, limit });
+            commit("SET_CARS_DATA", { carsData });
+          }
         } else {
           const page = state.cars[categoryId]?.page;
-          const carsData = await apiServices.getCars({ categoryId, page, limit });
-          commit("SET_CARS_DATA", { carsData, categoryId });
+          if (!state.cars.count) {
+            const carsData = await apiServices.getCars({ categoryId, page, limit });
+            commit("SET_CARS_DATA", { carsData, categoryId });
+          } else if (state.cars.count && state.cars[categoryId]?.value.length < state.cars.count) {
+            const carsData = await apiServices.getCars({ categoryId, page, limit });
+            commit("SET_CARS_DATA", { carsData, categoryId });
+          }
         }
       } catch (error) {
         throw new Error(error);
@@ -495,7 +508,7 @@ export default createStore({
       } else {
         // return state.cars[categoryId]?.value;
 
-        //временное решение, так как на бэке перестали проходить запросы по фильтру по категориям авто
+        // временное решение, так как на бэке перестали проходить запросы по фильтру по категориям авто
         return state.cars[categoryId]?.value.filter((car) => {
           if (car?.categoryId?.id) {
             return car.categoryId.id == categoryId

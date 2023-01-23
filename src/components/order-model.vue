@@ -60,18 +60,15 @@ export default {
     const filteredCarList = computed(() =>
       store.getters.FILTERED_CARSDATA_BY_CATEGORY(categoryCars.value)
     );
-    const checkedCategoryCars = computed(
-      () => store.state.checkedCategoryCars || "no-filter"
-    );
     const selectedCar = computed(() => store.state.selectedCar);
 
     const togglePreloader = computed(() => {
-      return filteredCarList.value?.length === 0
+      return filteredCarList.value?.length === 0;
     });
 
     const categoryCars = computed({
       get: () => {
-        return checkedCategoryCars.value;
+        return store.state.checkedCategoryCars || "no-filter";
       },
       set: (chosenCategoryCar) => {
         store.dispatch("GET_CHECKEDCATEGORY", chosenCategoryCar);
@@ -119,7 +116,6 @@ export default {
       categoryList,
       filteredCarList,
       intersected,
-      checkedCategoryCars,
       selectedCar,
       togglePreloader,
       categoryCars,
